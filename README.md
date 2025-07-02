@@ -1200,16 +1200,12 @@ pip install rustico
 **Requirements:**
 
 - Python 3.8+
-- `typing_extensions` (for Python < 3.11)
 
 **Optional dependencies:**
 
 ```bash
 # For development
-pip install rustico[dev]
-
-# For async support (already included)
-pip install rustico[async]
+pip install rustico
 ```
 
 ---

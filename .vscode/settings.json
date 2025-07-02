@@ -1,9 +1,7 @@
 {
   "python.languageServer": "Pylance",
-  "python.analysis.typeCheckingMode": "strict",
   "python.analysis.autoImportCompletions": true,
   "python.analysis.diagnosticMode": "workspace",
-  "python.analysis.stubPath": "typings",
   "ruff.enable": true,
   "ruff.organizeImports": true,
   "editor.formatOnSave": true,

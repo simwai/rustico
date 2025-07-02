@@ -112,8 +112,9 @@ format = "ruff format src/"
 test="pytest"
 clean-dist = "npx rimraf dist"
 upload-testpypi = "twine upload -r testpypi dist/* --skip-existing --config ./.pypirc"
+upload-pypi = "twine upload -r pypi dist/* --skip-existing --config ./.pypirc"
 test-publish = { composite = ["pdm clean-dist", "pdm build", "pdm upload-testpypi"] }
-publish = { composite = ["pdm clean-dist", "pdm build", "pdm publish"] }
+normal-publish = { composite = ["pdm clean-dist", "pdm build", "pdm upload-pypi"] }
 
 [tool.pdm]
 package-dir = "src"

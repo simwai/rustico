@@ -51,6 +51,66 @@ else:
 
 ---
 
+## Comparison with Other Libraries
+
+| Library         | Ok/Err | do-notation | Async | Decorators | Type Guards | Tracebacks | Type Hints | Monads | Rust-like | Philosophy      | Size  |
+|-----------------|--------|-------------|-------|------------|-------------|------------|------------|--------|-----------|-----------------|-------|
+| **rustico**     | ✅     | ✅          | ✅    | ✅         | ✅          | ✅         | ✅         | ✅     | ✅        | CUPID, explicit | Small |
+| result          | ✅     | ❌          | ❌    | ❌         | ❌          | ❌         | ✅         | Partial| ✅        | Simplicity      | Tiny  |
+| returns         | ✅     | Partial     | ✅    | ✅         | ✅          | ❌         | ✅         | ✅     | Partial   | Functional      | Large |
+| poltergeist     | ✅     | ❌          | ❌    | ❌         | ❌          | ❌         | ✅         | ❌     | ✅        | Minimalism      | Tiny  |
+| rusty-errors    | ✅     | ❌          | ❌    | ❌         | ❌          | ❌         | ✅         | Partial| ✅        | Rust-inspired   | Small |
+
+**Detailed Comparison:**
+
+### **rustico** (This Library)
+
+- **Strengths:** Full-featured, async-first, excellent TypeScript-like developer experience
+- **Philosophy:** CUPID principle - Composable, Unix-like, Predictable, Idiomatic, Declarative
+- **Best for:** New projects, async workflows, teams wanting explicit error handling
+- **Unique features:** Traceback capture, do-notation, dual-mode decorators
+
+### **result**
+
+- **Strengths:** Simple, lightweight, battle-tested
+- **Philosophy:** Keep it simple and close to Rust's API
+- **Best for:** Simple sync applications, minimal dependencies
+- **Limitations:** No async support, no decorators, basic feature set
+
+### **returns**
+
+- **Strengths:** Rich functional programming features, extensive ecosystem
+- **Philosophy:** Bring functional programming concepts to Python
+- **Best for:** FP enthusiasts, complex data transformation pipelines
+- **Unique features:** Maybe, IO, containers, railway-oriented programming
+- **Limitations:** Learning curve, heavy dependency
+
+### **poltergeist**
+
+- **Strengths:** Extremely minimal, zero dependencies
+- **Philosophy:** Minimalism above all
+- **Best for:** Embedded systems, minimal footprint requirements
+- **Limitations:** Very basic feature set, no advanced operations
+
+### **rusty-errors**
+
+- **Strengths:** Close to Rust's Result API
+- **Philosophy:** Direct Rust port
+- **Best for:** Rust developers transitioning to Python
+- **Limitations:** Limited Python-specific features, no async
+
+**Legend:**
+
+- **do-notation:** Generator-based early-exit chaining
+- **Async:** Native async/await support
+- **Decorators:** Built-in function wrapping decorators
+- **Type Guards:** `is_ok`, `is_err` for static analysis
+- **Tracebacks:** Captures exception tracebacks in `Err`
+- **Monads:** Supports chaining, mapping, flatMap operations
+- **Rust-like:** API and philosophy inspired by Rust
+
+---
+
 ## Basic Usage Examples
 
 ### 1. Wrapping Functions
@@ -924,66 +984,6 @@ except UnwrapError as e:
     if original_result.is_err():
         print(f"Original error: {original_result.unwrap_err()}")
 ```
-
----
-
-## Comparison with Other Libraries
-
-| Library         | Ok/Err | do-notation | Async | Decorators | Type Guards | Tracebacks | Type Hints | Monads | Rust-like | Philosophy      | Size  |
-|-----------------|--------|-------------|-------|------------|-------------|------------|------------|--------|-----------|-----------------|-------|
-| **rustico**     | ✅     | ✅          | ✅    | ✅         | ✅          | ✅         | ✅         | ✅     | ✅        | CUPID, explicit | Small |
-| result          | ✅     | ❌          | ❌    | ❌         | ❌          | ❌         | ✅         | Partial| ✅        | Simplicity      | Tiny  |
-| returns         | ✅     | Partial     | ✅    | ✅         | ✅          | ❌         | ✅         | ✅     | Partial   | Functional      | Large |
-| poltergeist     | ✅     | ❌          | ❌    | ❌         | ❌          | ❌         | ✅         | ❌     | ✅        | Minimalism      | Tiny  |
-| rusty-errors    | ✅     | ❌          | ❌    | ❌         | ❌          | ❌         | ✅         | Partial| ✅        | Rust-inspired   | Small |
-
-**Detailed Comparison:**
-
-### **rustico** (This Library)
-
-- **Strengths:** Full-featured, async-first, excellent TypeScript-like developer experience
-- **Philosophy:** CUPID principle - Composable, Unix-like, Predictable, Idiomatic, Declarative
-- **Best for:** New projects, async workflows, teams wanting explicit error handling
-- **Unique features:** Traceback capture, do-notation, dual-mode decorators
-
-### **result**
-
-- **Strengths:** Simple, lightweight, battle-tested
-- **Philosophy:** Keep it simple and close to Rust's API
-- **Best for:** Simple sync applications, minimal dependencies
-- **Limitations:** No async support, no decorators, basic feature set
-
-### **returns**
-
-- **Strengths:** Rich functional programming features, extensive ecosystem
-- **Philosophy:** Bring functional programming concepts to Python
-- **Best for:** FP enthusiasts, complex data transformation pipelines
-- **Unique features:** Maybe, IO, containers, railway-oriented programming
-- **Limitations:** Learning curve, heavy dependency
-
-### **poltergeist**
-
-- **Strengths:** Extremely minimal, zero dependencies
-- **Philosophy:** Minimalism above all
-- **Best for:** Embedded systems, minimal footprint requirements
-- **Limitations:** Very basic feature set, no advanced operations
-
-### **rusty-errors**
-
-- **Strengths:** Close to Rust's Result API
-- **Philosophy:** Direct Rust port
-- **Best for:** Rust developers transitioning to Python
-- **Limitations:** Limited Python-specific features, no async
-
-**Legend:**
-
-- **do-notation:** Generator-based early-exit chaining
-- **Async:** Native async/await support
-- **Decorators:** Built-in function wrapping decorators
-- **Type Guards:** `is_ok`, `is_err` for static analysis
-- **Tracebacks:** Captures exception tracebacks in `Err`
-- **Monads:** Supports chaining, mapping, flatMap operations
-- **Rust-like:** API and philosophy inspired by Rust
 
 ---
 

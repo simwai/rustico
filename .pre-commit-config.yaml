@@ -1,0 +1,9 @@
+repos:
+- repo: local
+  hooks:
+  - id: pdm-format
+    name: pdm format
+    entry: pdm format
+    language: python
+    pass_filenames: false
+    types: [ python ]

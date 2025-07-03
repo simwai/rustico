@@ -116,7 +116,7 @@ test-publish = { composite = ["pdm build", "pdm upload-testpypi"] }
 normal-publish = { composite = ["pdm build", "pdm upload-pypi"] }
 
 [tool.pdm.build]
-includes = ["src", ""]
+includes = ["src"]
 package-dir = "src"
 
 [build-system]

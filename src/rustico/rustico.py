@@ -393,17 +393,18 @@ def is_err(result: Result[T, E]) -> TypeIs[Err[E]]:
 
 
 def do(
-  fn_or_gen: Callable[..., Generator[Result[T, E], None, R]] | Generator[Result[T, E], None, R],
-) -> Callable[..., Result[T | R, E]] | Result[T | R, E]:
+  fn_or_gen: Callable[..., Generator[Result[T, E], T, R]] | Generator[Result[T, E], T, R],
+) -> Callable[[], Result[R, E]] | Result[R, E]:
   """
   A dual-purpose function for emulating do-notation.
-
   Can be used as a decorator:
+
   @do
   def my_func() -> Generator[...]:
       ...
 
   Or as a helper function:
+
   my_gen = my_func()
   result = do(my_gen)
   """
@@ -416,7 +417,7 @@ def do(
     fn = fn_or_gen
 
     @functools.wraps(fn)
-    def wrapper(*args: ..., **kwargs: Any) -> Result[T | R, E]:
+    def wrapper(*args: Any, **kwargs: Any) -> Result[R, E]:
       gen = fn(*args, **kwargs)
       return _run_do(gen)
 

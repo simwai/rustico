@@ -1,6 +1,6 @@
 [project]
 name = "rustico"
-version = "0.1.2"
+version = "0.1.3"
 description = "A Rust-inspired, ergonomic Result type for Python with first-class async support, pattern matching, and a clean API."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -110,14 +110,18 @@ combine-as-imports = true
 start="python -m src.rustico"
 format = "ruff format src/"
 test="pytest"
-clean-dist = "npx rimraf dist"
 upload-testpypi = "twine upload -r testpypi dist/* --skip-existing --config ./.pypirc"
 upload-pypi = "twine upload -r pypi dist/* --skip-existing --config ./.pypirc"
-test-publish = { composite = ["pdm clean-dist", "pdm build", "pdm upload-testpypi"] }
-normal-publish = { composite = ["pdm clean-dist", "pdm build", "pdm upload-pypi"] }
+test-publish = { composite = ["pdm build", "pdm upload-testpypi"] }
+normal-publish = { composite = ["pdm build", "pdm upload-pypi"] }
 
-[tool.pdm]
+[tool.pdm.build]
+includes = ["src", ""]
 package-dir = "src"
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
 [tool.pyright]
 include = ["src/**"]

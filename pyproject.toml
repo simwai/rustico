@@ -1,6 +1,6 @@
 [project]
 name = "rustico"
-version = "0.1.1"
+version = "0.1.2"
 description = "A Rust-inspired, ergonomic Result type for Python with first-class async support, pattern matching, and a clean API."
 readme = "README.md"
 requires-python = ">=3.8"

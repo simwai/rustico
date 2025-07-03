@@ -14,42 +14,77 @@ Imagine every function call as a box containing Schrödinger's cat. Until you op
 
 ---
 
-## Why `rustico`? (CUPID Principle)
+## 🚀 Quick Start: Why rustico > try/except
 
-- **Composability:** Chain operations with `.map`, `.and_then`, and more.
-- **Unix philosophy:** Functions do one thing, return one result.
-- **Predictability:** No hidden exceptions. Every error is explicit.
-- **Idiomatic:** Inspired by Rust, but designed for Python.
-- **Declarative:** Your code describes what happens, not how to handle chaos.
+The Problem with Traditional Error Handling:
 
----
-
-## 🚀 Quick Start: The Most Recommended Form
-
-Replace this:
+### Traditional approach - Error-prone and verbose
 
 ```python
-def parse_int(s: str) -> int:
-    return int(s)
+def process_user_data(user_id: str, age_str: str):
+    try:
+        user_id_int = int(user_id)
+    except ValueError:
+        return None  # Lost error information!
+    
+    try:
+        age = int(age_str)
+    except ValueError:
+        return None  # Which field failed?
+    
+    try:
+        if age < 0:
+            raise ValueError("Age cannot be negative")
+        return {"user_id": user_id_int, "age": age}
+    except ValueError:
+        return None  # Nested try/except hell!
+
+# Usage - You have to remember to check for None!
+result = process_user_data("123", "25")
+if result is None:  # But WHY did it fail?
+    print("Something went wrong...")
 ```
 
-With this, using `@as_result`:
+### The rustico Way - Explicit, Composable, Clear
 
 ```python
-from rustico import as_result
+from rustico import as_result, do, Ok, Err
 
 @as_result(ValueError)
 def parse_int(s: str) -> int:
     return int(s)
 
-result = parse_int("42")
-if result.is_ok():
-    print("Parsed:", result.unwrap())
-else:
-    print("Error:", result.unwrap_err())
+@do
+def process_user_data(user_id: str, age_str: str):
+    # Each step is explicit and composable
+    user_id_int = yield parse_int(user_id)
+    age = yield parse_int(age_str)
+    
+    if age < 0:
+        return Err("Age cannot be negative")
+    
+    return {"user_id": user_id_int, "age": age}
+
+# Usage - Errors are explicit and informative
+result = process_user_data("123", "25")
+match result:
+    case Ok(data):
+        print(f"Success: {data}")
+    case Err(error):
+        print(f"Failed because: {error}")
 ```
 
----
+Key Advantages:
+
+- 🔒 Can't Forget Error Handling: The type system forces you to handle both cases
+- 📍 Precise Error Information: Know exactly what and where things failed
+- 🧩 Composable: Chain operations without nested try/except blocks
+- 🎯 Early Exit: Stop processing on first error automatically
+- 🔍 Type Safe: Your IDE knows about both success and error cases
+
+> Real-World Comparison:<br>
+> Traditional: **15 lines, 3 try/except blocks, easy to forget error handling**<br>
+> rustico: **8 lines, automatic error propagation, impossible to ignore errors**
 
 ## Comparison with Other Libraries
 
@@ -159,21 +194,14 @@ print(result)  # Ok(42)
 ```python
 from rustico import as_result, do
 
-@as_result(ValueError)
-def parse_int(s: str) -> int:
-    return int(s)
-
 @do
-def compute():
-    a = yield parse_int("10")
-    b = yield parse_int("20")
-    return a + b
+def example():
+    # This yields Result[int, ValueError]
+    x = yield Ok(10)  # x receives the unwrapped int (type T)
+    y = yield Ok(20)  # y receives the unwrapped int (type T)
+    return x + y     
 
-result = compute()
-if result.is_ok():
-    print("Sum:", result.unwrap())
-else:
-    print("Error:", result.unwrap_err())
+print(example())
 ```
 
 ### 2. Early Exit on Error

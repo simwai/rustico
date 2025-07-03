@@ -9,14 +9,20 @@ from typing import Any, Generic, Literal, NoReturn, TypeVar, Union, cast
 try:
   from typing import ParamSpec
 except ImportError:
-  from typing_extensions import ParamSpec  # type: ignore
+  try:
+    from typing_extensions import ParamSpec  # type: ignore
+  except ImportError:
+    pass
 
 # TypeIs was added to typing in Python 3.11.
 # For older versions, we fall back to typing_extensions.
 try:
   from typing import TypeIs
 except ImportError:
-  from typing_extensions import TypeIs  # type: ignore
+  try:
+    from typing_extensions import TypeIs  # type: ignore
+  except ImportError:
+    pass
 
 T = TypeVar('T', covariant=True)  # Success type
 E = TypeVar('E', covariant=True)  # Error type
@@ -377,41 +383,13 @@ def as_async_result(
 
 
 def is_ok(result: Result[T, E]) -> TypeIs[Ok[T]]:
-  """Type guard to check if a result is an Ok."""
+  """Type guard to check if a result is an ``Ok``."""
   return result.is_ok()
 
 
 def is_err(result: Result[T, E]) -> TypeIs[Err[E]]:
-  """Type guard to check if a result is an Err."""
+  """Type guard to check if a result is an ``Err``."""
   return result.is_err()
-
-
-def _run_do(gen: Generator[Result[T, E], None, R]) -> Result[T | R, E]:
-  try:
-    value = None
-    while True:
-      res = gen.send(value)
-      if isinstance(res, Err):
-        return res
-      value = res.unwrap()
-  except StopIteration as e:
-    return Ok(e.value)
-
-
-async def _run_do_async(gen: AsyncGenerator[Result[T, E], None]) -> Result[T, E]:
-  """
-  A helper function that executes an async generator, yielding the final result.
-  This is the explicit helper for direct calls.
-  """
-  try:
-    value = None
-    while True:
-      res = await gen.asend(value)
-      if isinstance(res, Err):
-        return res
-      value = res.unwrap()
-  except StopAsyncIteration:
-    return Ok(cast(T, value))
 
 
 def do(
@@ -451,22 +429,26 @@ def do_async(
   fn_or_gen: Callable[..., AsyncGenerator[Result[T, E], None]] | AsyncGenerator[Result[T, E], None],
 ) -> Callable[..., Awaitable[Result[T, E]]] | Awaitable[Result[T, E]]:
   """
-  A dual-purpose function for async do-notation.
-  Can be used as a decorator or a helper function.
+  A dual-purpose function for emulating async do-notation.
+
+  Can be used as a decorator:
+  @do_async
+  async def my_func() -> AsyncGenerator[...]:
+      ...
+
+  Or as a helper function:
+  my_gen = my_func()
+  result = await do_async(my_gen)
   """
-  # Helper usage: await do_async(my_async_generator)
   if inspect.isasyncgen(fn_or_gen):
-    # Call the correct helper `_run_do_async` and return the awaitable.
     return _run_do_async(fn_or_gen)
 
-  # Decorator usage: @do_async
   if callable(fn_or_gen):
     fn = fn_or_gen
 
     @functools.wraps(fn)
     async def wrapper(*args: ..., **kwargs: Any) -> Result[T, E]:
       async_gen = fn(*args, **kwargs)
-      # Await the correct helper `_run_do_async` inside the wrapper.
       return await _run_do_async(async_gen)
 
     return wrapper
@@ -477,6 +459,10 @@ def do_async(
 def catch(
   *errors: type[E],
 ) -> Callable[[Callable[..., T]], Callable[..., Result[T, E]]]:
+  """
+  Make a decorator to catch specified exceptions and return them as ``Err``.
+  """
+
   def decorator(func: Callable[..., T]) -> Callable[..., Result[T, E]]:
     @functools.wraps(func)
     def wrapper(*args: ..., **kwargs: Any) -> Result[T, E]:
@@ -494,6 +480,10 @@ def catch(
 def catch_async(
   *errors: type[E],
 ) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[Result[T, E]]]]:
+  """
+  Make a decorator to catch specified exceptions in async functions and return them as ``Err``.
+  """
+
   def decorator(
     func: Callable[..., Awaitable[T]],
   ) -> Callable[..., Awaitable[Result[T, E]]]:
@@ -508,3 +498,30 @@ def catch_async(
     return wrapper
 
   return decorator
+
+
+def _run_do(gen: Generator[Result[T, E], None, R]) -> Result[T | R, E]:
+  try:
+    value = None
+    while True:
+      res = gen.send(value)
+      if isinstance(res, Err):
+        return res
+      value = res.unwrap()
+  except StopIteration as e:
+    return Ok(e.value)
+
+
+async def _run_do_async(gen: AsyncGenerator[Result[T, E], None]) -> Result[T, E]:
+  """
+  Helper function that executes an async generator and returns the final ``Result``.
+  """
+  try:
+    value = None
+    while True:
+      res = await gen.asend(value)
+      if isinstance(res, Err):
+        return res
+      value = res.unwrap()
+  except StopAsyncIteration:
+    return Ok(cast(T, value))

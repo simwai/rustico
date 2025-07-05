@@ -392,6 +392,78 @@ def is_err(result: Result[T, E]) -> TypeIs[Err[E]]:
   return result.is_err()
 
 
+def match(result: Result[T, E], ok_handler: Callable[[T], R], err_handler: Callable[[E], R] | None = None) -> R | None:
+  """Pattern match on a Result and apply the appropriate handler function.
+
+  This function provides a functional alternative to Python's pattern matching syntax,
+  allowing you to handle both success and error cases with dedicated handler functions.
+  It's particularly useful when you want to transform the contents of a Result without
+  unwrapping it first.
+
+  :param result: The Result object to match against
+  :type result: Result[T, E]
+  :param ok_handler: Function to call if the Result is Ok
+  :type ok_handler: Callable[[T], R]
+  :param err_handler: Optional function to call if the Result is Err
+  :type err_handler: Callable[[E], R] | None
+  :return: The return value of the handler function that was called,
+           or None if the Result is Err and no err_handler was provided
+  :rtype: R | None
+
+  :Example - Basic usage:
+
+  .. code-block:: python
+
+      # Handle both success and error cases
+      result = Ok(42)
+      message = match(result,
+                     lambda value: f"Success: {value}",
+                     lambda error: f"Error: {error}")
+      # message == "Success: 42"
+
+      result = Err("failed")
+      message = match(result,
+                     lambda value: f"Success: {value}",
+                     lambda error: f"Error: {error}")
+      # message == "Error: failed"
+
+  :Example - Transforming values:
+
+  .. code-block:: python
+
+      # Double a number if successful, or return 0 on error
+      result = Ok(21)
+      number = match(result, lambda x: x * 2, lambda _: 0)
+      # number == 42
+
+  :Example - Complex handling logic:
+
+  .. code-block:: python
+
+      def process_ok(value):
+          if value > 50:
+              return "Large value"
+          return "Small value"
+
+      def process_err(error):
+          if isinstance(error, str):
+              return f"String error: {error}"
+          return f"Other error: {error}"
+
+      # Different handling based on value content
+      result1 = Ok(42)
+      result2 = Err("not found")
+
+      status1 = match(result1, process_ok, process_err)  # "Small value"
+      status2 = match(result2, process_ok, process_err)  # "String error: not found"
+  """
+  if result.is_ok():
+    return ok_handler(result.unwrap())
+  elif err_handler is not None:
+    return err_handler(result.unwrap_err())
+  return None
+
+
 def do(
   fn_or_gen: Callable[..., Generator[Result[T, E], T, R]] | Generator[Result[T, E], T, R],
 ) -> Callable[[], Result[R, E]] | Result[R, E]:

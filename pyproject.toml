@@ -49,6 +49,10 @@ dev = [
     "pytest-asyncio>=0.24.0",
     "pre-commit>=3.5.0",
     "twine>=6.1.0",
+    "mkdocs>=1.6.1",
+    "mkdocs-autoapi>=0.4.1",
+    "mkdocstrings-python>=1.11.1",
+    "mkdocs-material>=9.6.15",
 ]
 
 [tool.ruff]
@@ -106,10 +110,16 @@ known-first-party = ["src"]
 force-single-line = false
 combine-as-imports = true
 
+
 [tool.pdm.scripts]
 start="python -m src.rustico"
 format = "ruff format src/"
 test="pytest"
+
+docs="mkdocs build"
+docs-clean="npx rimraf site"
+docs-serve="mkdocs serve"
+
 upload-testpypi = "twine upload -r testpypi dist/* --skip-existing --config ./.pypirc"
 upload-pypi = "twine upload -r pypi dist/* --skip-existing --config ./.pypirc"
 test-publish = { composite = ["pdm build", "pdm upload-testpypi"] }
@@ -127,7 +137,8 @@ build-backend = "pdm.backend"
 include = ["src/**"]
 exclude = [
   "**/__pycache__/**",
-  ".ruff_cache/**"
+  ".ruff_cache/**",
+  "**/pdm/python/**"
 ]
 pythonPlatform = "All"
 pythonVersion = "3.8"

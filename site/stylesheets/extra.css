@@ -1,0 +1,144 @@
+/* Discord-inspired theme for MkDocs Material */
+
+:root {
+  /* Discord brand colors */
+  --discord-blurple: #5865F2;
+  --discord-green: #57F287;
+  --discord-yellow: #FEE75C;
+  --discord-fuchsia: #EB459E;
+  --discord-red: #ED4245;
+  --discord-link: #00AFF4;
+
+  /* Discord UI colors */
+  --discord-bg: #36393F;
+  --discord-bg-dark: #2F3136;
+  --discord-bg-darker: #202225;
+  --discord-chat-input: #40444B;
+
+  /* Discord text colors */
+  --discord-text: #FFFFFF;
+  --discord-text-muted: #B9BBBE;
+  --discord-text-light: #DCDDDE;
+  --discord-text-channel: #8E9297;
+  --discord-text-lightest: #72767D;
+
+  /* Material theme overrides */
+  --md-primary-fg-color: var(--discord-blurple);
+  --md-primary-fg-color--light: var(--discord-blurple);
+  --discord-blurple-dark: #4752C4;
+  --md-primary-fg-color--dark: var(--discord-blurple-dark);
+  --md-accent-fg-color: var(--discord-fuchsia);
+  --md-typeset-a-color: var(--discord-link);
+}
+
+/* Dark mode customizations (Discord-like) */
+[data-md-color-scheme="slate"] {
+  --md-default-bg-color: var(--discord-bg);
+  --md-default-fg-color: var(--discord-text);
+  --md-default-fg-color--light: var(--discord-text-light);
+  --md-default-fg-color--lighter: var(--discord-text-muted);
+  --md-default-fg-color--lightest: var(--discord-text-lightest);
+
+  --md-code-bg-color: var(--discord-bg-dark);
+  --md-code-fg-color: var(--discord-text-light);
+
+  --md-footer-bg-color: var(--discord-bg-dark);
+  --md-footer-bg-color--dark: var(--discord-bg-darker);
+
+  /* Admonition colors */
+  --md-admonition-fg-color: var(--discord-text);
+  --md-admonition-bg-color: var(--discord-bg-dark);
+}
+
+/* Code blocks with Discord styling */
+.md-typeset pre>code {
+  background-color: var(--discord-bg-dark);
+  border-radius: 4px;
+}
+
+/* Navigation with Discord styling */
+.md-nav {
+  font-size: 0.75rem;
+}
+
+.md-nav__item .md-nav__link--active {
+  color: var(--discord-blurple);
+  font-weight: bold;
+}
+
+/* Buttons with Discord styling */
+.md-typeset .md-button {
+  background-color: var(--discord-blurple);
+  border-radius: 4px;
+  color: var(--discord-text);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.md-typeset .md-button:hover {
+  background-color: var(--md-primary-fg-color--dark);
+  color: var(--discord-text);
+}
+
+/* Tables with Discord styling */
+.md-typeset table:not([class]) {
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--discord-blurple);
+  color: var(--discord-text);
+}
+
+.md-typeset table:not([class]) tr:nth-child(even) {
+  background-color: rgba(47, 49, 54, 0.5);
+  /* Semi-transparent version of discord-bg-dark */
+}
+
+/* Admonitions with Discord styling */
+.md-typeset .admonition {
+  border-radius: 4px;
+  border-left: 4px solid var(--discord-blurple);
+}
+
+.md-typeset .admonition-title {
+  background-color: rgba(88, 101, 242, 0.1);
+  /* Semi-transparent version of discord-blurple */
+}
+
+.md-typeset .admonition.note {
+  border-left-color: var(--discord-blurple);
+}
+
+.md-typeset .admonition.tip {
+  border-left-color: var(--discord-green);
+}
+
+.md-typeset .admonition.warning {
+  border-left-color: var(--discord-yellow);
+}
+
+.md-typeset .admonition.danger {
+  border-left-color: var(--discord-red);
+}
+
+/* Search with Discord styling */
+.md-search__form {
+  background-color: var(--discord-chat-input);
+  border-radius: 4px;
+}
+
+/* Tabs with Discord styling */
+.md-tabs {
+  background-color: var(--discord-blurple);
+}
+
+/* Footer with Discord styling */
+.md-footer {
+  background-color: var(--discord-bg-dark);
+}
+
+.md-footer-meta {
+  background-color: var(--discord-bg-darker);
+}

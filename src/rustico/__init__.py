@@ -12,6 +12,7 @@ from .rustico import (
   do_async,
   is_err,
   is_ok,
+  match,
 )
 
 __all__ = [
@@ -28,4 +29,5 @@ __all__ = [
   'do_async',
   'is_err',
   'is_ok',
+  'match',
 ]

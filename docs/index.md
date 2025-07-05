@@ -1,6 +1,5 @@
 # Quick Links
 
-- [Installation](installation.md)
 - [Quick Start](quickstart.md)
 - [API Reference](api/rustico.rustico.md/)
 - [Examples](examples.md)

@@ -658,6 +658,17 @@ class Err(Generic[E]):
     Use when you expect success but got failure - indicates a logic error.
     Common for fail-fast scenarios and debugging. Avoid in normal error handling.
 
+    ---
+
+    The `unwrap()` method is powerful but should be used with caution. It's designed for situations where you are **certain** the `Result` holds a successful value (`Ok`).
+
+    *   If you call `result.unwrap()` on an `Ok` instance, it safely returns the contained value.
+    *   However, if you call `result.unwrap()` on an `Err` instance, it will **raise an `UnwrapError` exception**. This is a "fail-fast" mechanism, indicating an unexpected error or a logical flaw in your code.
+
+    For robust error handling where you expect and want to gracefully manage potential errors, prefer using methods like `is_ok()`, `is_err()`, `unwrap_or()`, `unwrap_or_else()`, `and_then()`, or Python's `match` statement to process the `Result` without risking an exception.
+
+    ---
+
     ```
     try:
         Err("fail").unwrap()

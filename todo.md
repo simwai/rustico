@@ -8,7 +8,7 @@
 - Implement `Result.transpose()` method for handling nested Results
 - Add benchmarking tests to compare performance with try/except
 - Create a tutorial series for new users
-- Add integration with popular frameworks (FastAPI, Django, etc.)
+- Add integration with popular frameworks (FastAPI, Django, Pydantic, etc.)
 - Implement `Result.flatten()` method for handling nested Results
 - Add support for custom error formatting
 - Add `Result.collect()` method for handling lists of Results

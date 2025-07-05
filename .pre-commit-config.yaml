@@ -7,3 +7,9 @@ repos:
     language: python
     pass_filenames: false
     types: [ python ]
+  - id: pdm-test
+    name: pdm test
+    entry: pdm test
+    language: python
+    pass_filenames: false
+    types: [ python ]

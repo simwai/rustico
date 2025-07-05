@@ -6,7 +6,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = { text = "MIT" }
 authors = [
-  { name = "Simon Waiblinger", email = "16225108+simwai@users.noreply.github.com" }
+  { name = "Simon Waiblinger", email = "16225108+simwai@users.noreply.github.com" },
 ]
 keywords = [
   "result",
@@ -18,7 +18,7 @@ keywords = [
   "decorator",
   "type-safety",
   "python",
-  "functional-programming"
+  "functional-programming",
 ]
 classifiers = [
   "Programming Language :: Python :: 3",
@@ -32,7 +32,7 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Developers",
   "Topic :: Software Development :: Libraries :: Python Modules",
-  "Typing :: Typed"
+  "Typing :: Typed",
 ]
 dependencies = []
 
@@ -44,29 +44,28 @@ Tracker = "https://github.com/simwai/rustico/issues"
 
 [dependency-groups]
 dev = [
-    "ruff>=0.12.1",
-    "pytest>=8.3.5",
-    "pytest-asyncio>=0.24.0",
-    "pre-commit>=3.5.0",
-    "twine>=6.1.0",
-    "mkdocs>=1.6.1",
-    "mkdocs-autoapi>=0.4.1",
-    "mkdocstrings-python>=1.11.1",
-    "mkdocs-material>=9.6.15",
+  "ruff>=0.12.1",
+  "pytest>=8.3.5",
+  "pytest-asyncio>=0.24.0",
+  "pre-commit>=3.5.0",
+  "twine>=6.1.0",
+  "mkdocs>=1.6.1",
+  "mkdocs-material>=9.6.15",
+  "lazydocs>=0.4.8",
 ]
 
 [tool.ruff]
 exclude = [
-    ".git",
-    ".pytest_cache",
-    ".ruff_cache",
-    ".venv",
-    "__pypackages__",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    "*.json",
+  ".git",
+  ".pytest_cache",
+  ".ruff_cache",
+  ".venv",
+  "__pypackages__",
+  "build",
+  "dist",
+  "node_modules",
+  "venv",
+  "*.json",
 ]
 line-length = 120
 indent-width = 2
@@ -74,21 +73,21 @@ target-version = "py38"
 
 [tool.ruff.lint]
 select = [
-    "E",      # pycodestyle errors
-    "W",      # pycodestyle warnings
-    "F",      # Pyflakes
-    "I",      # isort
-    "B",      # flake8-bugbear
-    "C4",     # flake8-comprehensions
-    "UP",     # pyupgrade
-    "RUF",    # Ruff-specific rules
-    "E501",   # line too long, handled by formatter
+  "E",    # pycodestyle errors
+  "W",    # pycodestyle warnings
+  "F",    # Pyflakes
+  "I",    # isort
+  "B",    # flake8-bugbear
+  "C4",   # flake8-comprehensions
+  "UP",   # pyupgrade
+  "RUF",  # Ruff-specific rules
+  "E501", # line too long, handled by formatter
 ]
 ignore = [
-    "B008",   # do not perform function calls in argument defaults
-    "C901",   # too complex (your workflow methods might be complex)
-    "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
-    "W293",   # blank line contains whitespace
+  "B008",   # do not perform function calls in argument defaults
+  "C901",   # too complex (your workflow methods might be complex)
+  "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+  "W293",   # blank line contains whitespace
 ]
 fixable = ["ALL"]
 unfixable = []
@@ -110,15 +109,15 @@ known-first-party = ["src"]
 force-single-line = false
 combine-as-imports = true
 
-
 [tool.pdm.scripts]
-start="python -m src.rustico"
+start = "python -m src.rustico"
 format = "ruff format src/"
-test="pytest"
+test = "pytest"
 
-docs="mkdocs build"
-docs-clean="npx rimraf site"
-docs-serve="mkdocs serve"
+lazydocs-build = "lazydocs --output-path=./docs/api src/"
+mkdocs-build = "mkdocs build"
+mkdocs-serve = "mkdocs serve"
+docs = { composite = ["pdm lazydocs-build", "pdm mkdocs-build"] }
 
 upload-testpypi = "twine upload -r testpypi dist/* --skip-existing --config ./.pypirc"
 upload-pypi = "twine upload -r pypi dist/* --skip-existing --config ./.pypirc"
@@ -135,34 +134,30 @@ build-backend = "pdm.backend"
 
 [tool.pyright]
 include = ["src/**"]
-exclude = [
-  "**/__pycache__/**",
-  ".ruff_cache/**",
-  "**/pdm/python/**"
-]
+exclude = ["**/__pycache__/**", ".ruff_cache/**", "**/pdm/python/**"]
 pythonPlatform = "All"
 pythonVersion = "3.8"
 
 typeCheckingMode = "off"
 # analyzeUnannotatedFunctions = false
 
-reportArgumentType = false  # 155
-reportAssignmentType = false  # 12
-reportAttributeAccessIssue = false  # 255
-reportCallIssue = false  # 23
-reportGeneralTypeIssues = false  # 48
-reportIncompatibleMethodOverride = false  # 15
-reportIncompatibleVariableOverride = false  # 5
-reportIndexIssue = false  # 22
-reportMissingImports = false  # 5
-reportOperatorIssue = false  # 7
-reportOptionalMemberAccess = false  # 35
-reportOptionalOperand = false  # 7
-reportPossiblyUnboundVariable = false  # 36
-reportPrivateImportUsage = false  # 5
-reportRedeclaration = false  # 1
-reportReturnType = false  # 28
-reportTypedDictNotRequiredAccess = false  # 27
+reportArgumentType = false                 # 155
+reportAssignmentType = false               # 12
+reportAttributeAccessIssue = false         # 255
+reportCallIssue = false                    # 23
+reportGeneralTypeIssues = false            # 48
+reportIncompatibleMethodOverride = false   # 15
+reportIncompatibleVariableOverride = false # 5
+reportIndexIssue = false                   # 22
+reportMissingImports = false               # 5
+reportOperatorIssue = false                # 7
+reportOptionalMemberAccess = false         # 35
+reportOptionalOperand = false              # 7
+reportPossiblyUnboundVariable = false      # 36
+reportPrivateImportUsage = false           # 5
+reportRedeclaration = false                # 1
+reportReturnType = false                   # 28
+reportTypedDictNotRequiredAccess = false   # 27
 
 [tool.pytest.ini_options]
 asyncio_mode = "strict"

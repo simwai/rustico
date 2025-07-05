@@ -80,17 +80,6 @@ markdown_extensions:
 
 plugins:
 - search
-- mkdocs-autoapi:
-    autoapi_dir: "src"
-    autoapi_file_patterns: [ "*.py" ]
-    autoapi_ignore: [ "**/.venv/**", "**/site/**", "**/tests/**" ]
-    autoapi_root: "autoapi"
-    autoapi_add_nav_entry: "API Reference"
-- mkdocstrings:
-    handlers:
-      python:
-        paths: [ "src" ]
-
 extra_css:
 - stylesheets/extra.css
 

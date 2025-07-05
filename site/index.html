@@ -50,8 +50,6 @@
       
     
     
-      <link rel="stylesheet" href="assets/_mkdocstrings.css">
-    
       <link rel="stylesheet" href="stylesheets/extra.css">
     
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -80,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#rustico" class="md-skip">
+        <a href="#quick-links" class="md-skip">
           Skip to content
         </a>
       
@@ -276,19 +274,6 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -300,61 +285,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-is-rustico" class="md-nav__link">
-    <span class="md-ellipsis">
-      What is rustico?
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#schrodingers-cat-the-metaphor" class="md-nav__link">
-    <span class="md-ellipsis">
-      Schrödinger's Cat: The Metaphor
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      Key Features
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick Links
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -470,68 +400,6 @@
   
 
     
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="autoapi/rustico/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    API Reference
-    
-  </span>
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_7">
-            <span class="md-nav__icon md-icon"></span>
-            API Reference
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
   </ul>
 </nav>
                   </div>
@@ -552,50 +420,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#what-is-rustico" class="md-nav__link">
-    <span class="md-ellipsis">
-      What is rustico?
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#schrodingers-cat-the-metaphor" class="md-nav__link">
-    <span class="md-ellipsis">
-      Schrödinger's Cat: The Metaphor
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      Key Features
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quick-links" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quick Links
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -613,30 +437,11 @@
   
 
 
-<h1 id="rustico">rustico</h1>
-<blockquote>
-<p><strong>A Schrödinger's Cat for Python error handling: your result is both alive and dead—until you unwrap it.</strong></p>
-</blockquote>
-<h2 id="what-is-rustico">What is <code>rustico</code>?</h2>
-<p><code>rustico</code> brings the power and elegance of Rust's <code>Result</code> type to Python. Every operation is either a success (<code>Ok</code>) or a failure (<code>Err</code>), and you must explicitly handle both. No more try/except hell—just beautiful, predictable, and composable error handling.</p>
-<h2 id="schrodingers-cat-the-metaphor">Schrödinger's Cat: The Metaphor</h2>
-<p>Imagine every function call as a box containing Schrödinger's cat. Until you open (unwrap) the box, the cat is both alive (<code>Ok</code>) and dead (<code>Err</code>). With <code>rustico</code>, you don't have to guess or hope—when you unwrap the result, you'll know exactly what you got, and you'll handle both cases explicitly.</p>
-<h2 id="key-features">Key Features</h2>
-<ul>
-<li>🔒 <strong>Can't Forget Error Handling</strong>: The type system forces you to handle both cases</li>
-<li>📍 <strong>Precise Error Information</strong>: Know exactly what and where things failed</li>
-<li>🧩 <strong>Composable</strong>: Chain operations without nested try/except blocks</li>
-<li>🎯 <strong>Early Exit</strong>: Stop processing on first error automatically</li>
-<li>🔍 <strong>Type Safe</strong>: Your IDE knows about both success and error cases</li>
-<li>⚡ <strong>Async Support</strong>: First-class support for async/await</li>
-<li>🧪 <strong>Test Friendly</strong>: Easily mock and test error conditions</li>
-<li>🔄 <strong>Pattern Matching</strong>: Native support for Python 3.10+ pattern matching</li>
-</ul>
-<h2 id="quick-links">Quick Links</h2>
+<h1 id="quick-links">Quick Links</h1>
 <ul>
 <li><a href="installation/">Installation</a></li>
 <li><a href="quickstart/">Quick Start</a></li>
-<li><a href="autoapi/">API Reference</a></li>
+<li><a href="api/rustico.rustico/">API Reference</a></li>
 <li><a href="examples/">Examples</a></li>
 <li><a href="comparison/">Comparison with Other Libraries</a></li>
 <li><a href="contributing/">Contributing</a></li>

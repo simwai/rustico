@@ -10,3 +10,5 @@ dist
 # Sensitive
 .env
 .pypirc
+
+site

@@ -2,34 +2,26 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://github.com/simwai/rustico/</loc>
-         <lastmod>2025-07-05</lastmod>
+         <lastmod>2025-07-18</lastmod>
     </url>
     <url>
          <loc>https://github.com/simwai/rustico/comparison/</loc>
-         <lastmod>2025-07-05</lastmod>
+         <lastmod>2025-07-18</lastmod>
     </url>
     <url>
          <loc>https://github.com/simwai/rustico/contributing/</loc>
-         <lastmod>2025-07-05</lastmod>
+         <lastmod>2025-07-18</lastmod>
     </url>
     <url>
          <loc>https://github.com/simwai/rustico/examples/</loc>
-         <lastmod>2025-07-05</lastmod>
-    </url>
-    <url>
-         <loc>https://github.com/simwai/rustico/installation/</loc>
-         <lastmod>2025-07-05</lastmod>
+         <lastmod>2025-07-18</lastmod>
     </url>
     <url>
          <loc>https://github.com/simwai/rustico/quickstart/</loc>
-         <lastmod>2025-07-05</lastmod>
+         <lastmod>2025-07-18</lastmod>
     </url>
     <url>
-         <loc>https://github.com/simwai/rustico/api/rustico/</loc>
-         <lastmod>2025-07-05</lastmod>
-    </url>
-    <url>
-         <loc>https://github.com/simwai/rustico/api/rustico.rustico/</loc>
-         <lastmod>2025-07-05</lastmod>
+         <loc>https://github.com/simwai/rustico/rustico/</loc>
+         <lastmod>2025-07-18</lastmod>
     </url>
 </urlset>

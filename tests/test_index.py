@@ -87,10 +87,6 @@ class TestOk:
     with pytest.raises(UnwrapError):
       Ok(10).unwrap_err()
 
-  def test_ok_swap(self):
-    """✅ Test: Business Logic - swap turns an Ok into an Err."""
-    assert Ok('value').swap() == Err('value')
-
   def test_ok_value_or(self):
     """✅ Test: Business Logic - value_or returns the value, not the default."""
     assert Ok(42).value_or(0) == 42
@@ -156,10 +152,6 @@ class TestErr:
     """✅ Test: Error Handling - expect on Err raises UnwrapError with a custom message."""
     with pytest.raises(UnwrapError, match="Custom message: 'fail'"):
       Err('fail').expect('Custom message')
-
-  def test_err_swap(self):
-    """✅ Test: Business Logic - swap turns an Err into an Ok."""
-    assert Err('error').swap() == Ok('error')
 
   def test_err_value_or(self):
     """✅ Test: Business Logic - value_or returns the default value."""

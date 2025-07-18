@@ -8,8 +8,5 @@
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit",
     "source.fixAll.ruff": "explicit"
-  },
-  "zencoder.repoInfo.lastCheckTime": 1751637087116,
-  "zencoder.repoInfo.currentWarningState": true,
-  "zencoder.enableRepoIndexing": true
+  }
 }

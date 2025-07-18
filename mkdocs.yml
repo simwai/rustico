@@ -11,84 +11,91 @@ theme:
   name: material
   language: en
   palette:
-  # Discord-inspired dark theme (primary)
-  - media: "(prefers-color-scheme: dark)"
-    scheme: slate
-    primary: custom
-    accent: indigo
-    toggle:
-      icon: material/toggle-switch
-      name: Switch to light mode
-  # Light mode alternative
-  - media: "(prefers-color-scheme: light)"
-    scheme: default
-    primary: indigo
-    accent: indigo
-    toggle:
-      icon: material/toggle-switch-off-outline
-      name: Switch to dark mode
+    # Discord-inspired dark theme (primary)
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+    # Light mode alternative
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
   font:
     text: Roboto
     code: Roboto Mono
   icon:
     repo: fontawesome/brands/github
   features:
-  - navigation.instant
-  - navigation.tracking
-  - navigation.expand
-  - navigation.indexes
-  - navigation.top
-  - content.code.copy
-  - content.code.annotate
-  - content.tabs.link
-  - search.highlight
-  - search.share
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - search.highlight
+    - search.share
 
 nav:
-- Home: index.md
-- Installation: installation.md
-- Quick Start: quickstart.md
-- Examples: examples.md
-- Comparison: comparison.md
-- Contributing: contributing.md
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - Examples: examples.md
+  - Comparison: comparison.md
+  - Contributing: contributing.md
+  - API Reference:
+      - ...
 
 markdown_extensions:
-- admonition
-- pymdownx.details
-- pymdownx.superfences:
-    custom_fences:
-    - name: mermaid
-      class: mermaid
-      format: !!python/name:pymdownx.superfences.fence_code_format ""
-- pymdownx.highlight:
-    anchor_linenums: true
-    line_spans: __span
-    pygments_lang_class: true
-- pymdownx.inlinehilite
-- pymdownx.snippets
-- pymdownx.tabbed:
-    alternate_style: true
-- pymdownx.emoji:
-    emoji_index: !!python/name:material.extensions.emoji.twemoji ""
-    emoji_generator: !!python/name:material.extensions.emoji.to_svg ""
-- pymdownx.tasklist:
-    custom_checkbox: true
-- tables
-- attr_list
-- md_in_html
-- def_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format ""
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji ""
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg ""
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - tables
+  - attr_list
+  - md_in_html
+  - def_list
 
 plugins:
-- search
+  - search
+  - awesome-pages:
+      collapse_single_pages: true
+      strict: false
+      order: asc
+      sort_type: natural
+      order_by: title
 extra_css:
-- stylesheets/extra.css
+  - stylesheets/extra.css
 
 extra:
   social:
-  - icon: fontawesome/brands/github
-    link: https://github.com/simwai/rustico
-  - icon: fontawesome/brands/python
-    link: https://pypi.org/project/rustico/
+    - icon: fontawesome/brands/github
+      link: https://github.com/simwai/rustico
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/rustico/
   # Discord-inspired status indicators
   status:
     new: ✨ New

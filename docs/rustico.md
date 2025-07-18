@@ -19,8 +19,8 @@
 
 ```python
 as_result(
-    *exceptions: 'type[E]'
-) → Callable[[Callable[, R]], Callable[, Result[R, E]]]
+    *exceptions: 'BE'
+) → Callable[[Callable[, T]], Callable[, Result[T, BE]]]
 ```
 
 Decorator that converts a function to return Result, catching specified exceptions as Err. 
@@ -39,14 +39,14 @@ parse_int("fail")  # Err(ValueError(...))
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L895"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L893"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `as_async_result`
 
 ```python
 as_async_result(
-    *exceptions: 'type[E]'
-) → Callable[[Callable[, Awaitable[R]]], Callable[, Awaitable[Result[R, E]]]]
+    *exceptions: 'type[BE]'
+) → Callable[[Callable[, Awaitable[T]]], Callable[, Awaitable[Result[T, BE]]]]
 ```
 
 Decorator that converts an async function to return Result, catching specified exceptions as Err. 
@@ -62,7 +62,7 @@ async def parse_int_async(x: str) -> int:
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L930"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L926"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `is_ok`
 
@@ -82,7 +82,7 @@ is_ok(Err("fail"))  # False
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L945"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L941"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `is_err`
 
@@ -102,16 +102,16 @@ is_err(Err("fail"))  # True
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L960"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L956"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `match`
 
 ```python
 match(
     result: 'Result[T, E]',
-    ok_handler: 'Callable[[T], R]',
-    err_handler: 'Callable[[E], R] | None' = None
-) → R | None
+    ok_handler: 'Callable[[T], T]',
+    err_handler: 'Callable[[E], T] | None' = None
+) → T | None
 ```
 
 Pattern match on a Result and apply the appropriate handler function. 
@@ -144,14 +144,14 @@ formatted = match(
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L998"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L994"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `do`
 
 ```python
 do(
-    fn_or_gen: 'Callable[, Generator[Result[T, E], T | None, R]] | Generator[Result[T, E], T | None, R]'
-) → Callable[[], Result[R, E]] | Result[R, E]
+    fn_or_gen: 'Callable[, Generator[Result[T, E], T | None, T]] | Generator[Result[T, E], T | None, T]'
+) → Callable[[], Result[T, E]] | Result[T, E]
 ```
 
 Dual-purpose function for emulating do-notation with Result types. 
@@ -171,7 +171,7 @@ my_func()  # Ok(5)
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1034"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1030"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `do_async`
 
@@ -196,12 +196,14 @@ async def my_func() -> AsyncGenerator[...]:
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1068"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1064"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `catch`
 
 ```python
-catch(*errors: 'type[E]') → Callable[[Callable[, T]], Callable[, Result[T, E]]]
+catch(
+    *exceptions: 'type[BE]'
+) → Callable[[Callable[, T]], Callable[, Result[T, BE]]]
 ```
 
 Decorator that catches specified exceptions and returns them as Err Results. 
@@ -217,14 +219,14 @@ def parse(x: str) -> int:
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1096"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `catch_async`
 
 ```python
 catch_async(
-    *errors: 'type[E]'
-) → Callable[[Callable[, Awaitable[T]]], Callable[, Awaitable[Result[T, E]]]]
+    *exceptions: 'type[BE]'
+) → Callable[[Callable[, Awaitable[T]]], Callable[, Awaitable[Result[T, BE]]]]
 ```
 
 Decorator that catches specified exceptions in async functions and returns them as Err Results. 
@@ -736,7 +738,7 @@ Ok(1).unwrap_or_else(lambda e: 0)  # 1
 ### <kbd>method</kbd> `unwrap_or_raise`
 
 ```python
-unwrap_or_raise(e: 'object') → T
+unwrap_or_raise(e: 'E') → T
 ```
 
 Returns the contained value, ignoring the exception since Ok cannot fail. 
@@ -812,13 +814,9 @@ Returns the captured stack trace as a list of formatted strings for BaseExceptio
 
 Use for debugging and error reporting when the error value is an exception. Computed lazily to avoid performance overhead. Returns None for non-exception errors. Avoid when error value is not an exception. 
 
-```
-try:
-     raise ValueError("fail")
-except ValueError as e:
-     err = Err(e)
-     print(err.trace)
-``` 
+
+
+try:  raise ValueError("fail") except ValueError as e:  err = Err(e)  print(err.trace) 
 
 
 
@@ -1246,7 +1244,7 @@ Err(2).unwrap_or_else(lambda e: e + 1)  # 3
 ### <kbd>method</kbd> `unwrap_or_raise`
 
 ```python
-unwrap_or_raise(e: 'type[E]') → NoReturn
+unwrap_or_raise(e: 'E') → NoReturn
 ```
 
 Raises the provided exception type with the error value as the message. 

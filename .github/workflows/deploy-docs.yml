@@ -17,13 +17,11 @@ jobs:
         with:
           python-version: "3.9.23"
 
+      - name: Install pdm
+        run: pip install pdm==2.25.2
+
       - name: Install MkDocs toolchain
-        run: |
-          pip install \
-            pdm==2.25.2
-            mkdocs==1.6.1 \
-            mkdocs-material==9.6.15 \
-            mkdocs-awesome-pages-plugin==2.9.2
+        run: pdm install
 
       - name: Build documentation
         run: pdm mkdocs-build

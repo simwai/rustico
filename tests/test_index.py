@@ -231,7 +231,7 @@ class TestDecorators:
 
   def test_as_result_requires_exception_types(self):
     """✅ Test: Error Handling - @as_result raises TypeError for invalid args."""
-    expected_message = re.escape('as_result() requires one or more exception types')
+    expected_message = re.escape('as_result() requires at least one exception type')
     with pytest.raises(TypeError, match=expected_message):
 
       @as_result('not a type')
@@ -423,3 +423,33 @@ class TestTypeGuards:
     """✅ Test: Business Logic - is_err correctly identifies Err types."""
     assert is_err(Err(1)) is True
     assert is_err(Ok(1)) is False
+
+
+# --- Unit Tests for match ---
+class TestErrMatch:
+  def test_err_match_with_both_handlers(self):
+    result = Err('fail').match(ok=lambda x: f'Got {x}', err=lambda e: f'Error: {e}')
+    assert result == 'Error: fail'
+
+  def test_err_match_with_only_err_handler(self):
+    result = Err('fail').match(err=lambda e: f'Error: {e}')
+    assert result == 'Error: fail'
+
+  def test_err_match_with_none_value(self):
+    result = Err(None).match(err=lambda e: 'Got None error')
+    assert result == 'Got None error'
+
+  def test_err_match_with_complex_handler(self):
+    def complex_handler(e):
+      return {'error': str(e), 'code': 500}
+
+    result = Err('server error').match(err=complex_handler)
+    assert result == {'error': 'server error', 'code': 500}
+
+  def test_err_match_missing_err_handler_raises(self):
+    with pytest.raises(ValueError, match="Err.match requires an 'err' handler"):
+      Err('fail').match(ok=lambda x: f'Got {x}')
+
+  def test_err_match_with_type_conversion(self):
+    result = Err(404).match(err=lambda e: str(e))
+    assert result == '404'

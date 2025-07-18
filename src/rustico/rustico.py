@@ -24,9 +24,9 @@ except ImportError:
 
 T = TypeVar('T')
 U = TypeVar('U')
-F = TypeVar('F', bound=BaseException)
-R = TypeVar('R')
-E = TypeVar('E', bound=BaseException)
+F = TypeVar('F')
+E = TypeVar('E')
+BE = TypeVar('BE', bound=BaseException)
 
 
 class UnwrapError(Exception, Generic[T, E]):
@@ -273,7 +273,7 @@ class Ok(Generic[T]):
     """
     return self._value
 
-  def unwrap_or_raise(self, e: object) -> T:
+  def unwrap_or_raise(self, e: E) -> T:
     """
     Returns the contained value, ignoring the exception since Ok cannot fail.
 
@@ -453,10 +453,10 @@ class Err(Generic[E]):
   def __init__(self, value: E) -> None:
     self._value = value
     # Use a sentinel for lazy traceback computation to avoid side effects in constructor
-    self._trace: list[str] | None | type(...) = ...  # type: ignore
+    self._trace: list[str] | None | type(...) = ... if isinstance(value, BaseException) else None  # type: ignore
 
   def _capture_traceback(self, exc: E) -> list[str] | None:
-    if exc.__traceback__ is not None:
+    if isinstance(exc, BaseException) and exc.__traceback__ is not None:
       stack_summary = traceback.extract_tb(exc.__traceback__)
       return traceback.format_list(stack_summary)
     return None
@@ -470,17 +470,17 @@ class Err(Generic[E]):
     Computed lazily to avoid performance overhead. Returns None for non-exception errors.
     Avoid when error value is not an exception.
 
-    ```
+
     try:
         raise ValueError("fail")
     except ValueError as e:
         err = Err(e)
         print(err.trace)
-    ```
+
     """
     # Lazy computation of traceback to avoid constructor side effects
-    if self._trace is ...:
-      self._trace = self._capture_traceback(self._value) if isinstance(self._value, BaseException) else None
+    if isinstance(self._value, BaseException) and self._trace is ...:
+      self._trace = self._capture_traceback(self._value)  # type: ignore
     return self._trace
 
   def __repr__(self) -> str:
@@ -689,7 +689,7 @@ class Err(Generic[E]):
     """
     return op(self._value)
 
-  def unwrap_or_raise(self, e: type[E]) -> NoReturn:
+  def unwrap_or_raise(self, e: E) -> NoReturn:
     """
     Raises the provided exception type with the error value as the message.
 
@@ -857,8 +857,8 @@ OkErr = (Ok, Err)
 
 
 def as_result(
-  *exceptions: type[E],
-) -> Callable[[Callable[..., R]], Callable[..., Result[R, E]]]:
+  *exceptions: BE,
+) -> Callable[[Callable[..., T]], Callable[..., Result[T, BE]]]:
   """
   Decorator that converts a function to return Result, catching specified exceptions as Err.
 
@@ -874,14 +874,12 @@ def as_result(
   parse_int("fail")  # Err(ValueError(...))
   ```
   """
-  if not exceptions or not all(
-    inspect.isclass(exception) and issubclass(exception, BaseException) for exception in exceptions
-  ):
-    raise TypeError('as_result() requires one or more exception types')
+  if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):
+    raise TypeError('as_result() requires at least one exception type')
 
-  def decorator(f: Callable[..., R]) -> Callable[..., Result[R, E]]:
+  def decorator(f: Callable[..., T]) -> Callable[..., Result[T, BE]]:
     @functools.wraps(f)
-    def wrapper(*args: Any, **kwargs: Any) -> Result[R, E]:
+    def wrapper(*args: Any, **kwargs: Any) -> Result[T, BE]:
       try:
         return Ok(f(*args, **kwargs))
       except exceptions as exc:
@@ -893,8 +891,8 @@ def as_result(
 
 
 def as_async_result(
-  *exceptions: type[E],
-) -> Callable[[Callable[..., Awaitable[R]]], Callable[..., Awaitable[Result[R, E]]]]:
+  *exceptions: type[BE],
+) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[Result[T, BE]]]]:
   """
   Decorator that converts an async function to return Result, catching specified exceptions as Err.
 
@@ -907,16 +905,14 @@ def as_async_result(
       return int(x)
   ```
   """
-  if not exceptions or not all(
-    inspect.isclass(exception) and issubclass(exception, BaseException) for exception in exceptions
-  ):
-    raise TypeError('as_result() requires one or more exception types')
+  if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):
+    raise TypeError('as_result() requires at least one exception type')
 
   def decorator(
-    f: Callable[..., Awaitable[R]],
-  ) -> Callable[..., Awaitable[Result[R, E]]]:
+    f: Callable[..., Awaitable[T]],
+  ) -> Callable[..., Awaitable[Result[T, BE]]]:
     @functools.wraps(f)
-    async def async_wrapper(*args: Any, **kwargs: Any) -> Result[R, E]:
+    async def async_wrapper(*args: Any, **kwargs: Any) -> Result[T, BE]:
       try:
         return Ok(await f(*args, **kwargs))
       except exceptions as exc:
@@ -957,7 +953,7 @@ def is_err(result: Result[T, E]) -> TypeIs[Err[E]]:
   return result.is_err()
 
 
-def match(result: Result[T, E], ok_handler: Callable[[T], R], err_handler: Callable[[E], R] | None = None) -> R | None:
+def match(result: Result[T, E], ok_handler: Callable[[T], T], err_handler: Callable[[E], T] | None = None) -> T | None:
   """
   Pattern match on a Result and apply the appropriate handler function.
 
@@ -996,8 +992,8 @@ def match(result: Result[T, E], ok_handler: Callable[[T], R], err_handler: Calla
 
 
 def do(
-  fn_or_gen: Callable[..., Generator[Result[T, E], T | None, R]] | Generator[Result[T, E], T | None, R],
-) -> Callable[[], Result[R, E]] | Result[R, E]:
+  fn_or_gen: Callable[..., Generator[Result[T, E], T | None, T]] | Generator[Result[T, E], T | None, T],
+) -> Callable[[], Result[T, E]] | Result[T, E]:
   """
   Dual-purpose function for emulating do-notation with Result types.
 
@@ -1022,7 +1018,7 @@ def do(
     fn = fn_or_gen
 
     @functools.wraps(fn)
-    def wrapper(*args: Any, **kwargs: Any) -> Result[R, E]:
+    def wrapper(*args: Any, **kwargs: Any) -> Result[T, E]:
       gen = fn(*args, **kwargs)
       return _run_do(gen)
 
@@ -1066,8 +1062,8 @@ def do_async(
 
 
 def catch(
-  *errors: type[E],
-) -> Callable[[Callable[..., T]], Callable[..., Result[T, E]]]:
+  *exceptions: type[BE],
+) -> Callable[[Callable[..., T]], Callable[..., Result[T, BE]]]:
   """
   Decorator that catches specified exceptions and returns them as Err Results.
 
@@ -1080,16 +1076,16 @@ def catch(
       return int(x)
   ```
   """
+  if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):
+    raise TypeError('as_result() requires at least one exception type')
 
-  def decorator(func: Callable[..., T]) -> Callable[..., Result[T, E]]:
+  def decorator(func: Callable[..., T]) -> Callable[..., Result[T, BE]]:
     @functools.wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Result[T, E]:
+    def wrapper(*args: Any, **kwargs: Any) -> Result[T, BE]:
       try:
         result = func(*args, **kwargs)
-      except errors as e:
-        if isinstance(e, errors):
-          return Err(e)
-        raise
+      except exceptions as e:
+        return Err(e)
       return Ok(result)
 
     return wrapper
@@ -1098,8 +1094,8 @@ def catch(
 
 
 def catch_async(
-  *errors: type[E],
-) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[Result[T, E]]]]:
+  *exceptions: type[BE],
+) -> Callable[[Callable[..., Awaitable[T]]], Callable[..., Awaitable[Result[T, BE]]]]:
   """
   Decorator that catches specified exceptions in async functions and returns them as Err Results.
 
@@ -1112,18 +1108,18 @@ def catch_async(
       return int(x)
   ```
   """
+  if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):
+    raise TypeError('as_result() requires at least one exception type')
 
   def decorator(
     func: Callable[..., Awaitable[T]],
-  ) -> Callable[..., Awaitable[Result[T, E]]]:
+  ) -> Callable[..., Awaitable[Result[T, BE]]]:
     @functools.wraps(func)
-    async def wrapper(*args: Any, **kwargs: Any) -> Result[T, E]:
+    async def wrapper(*args: Any, **kwargs: Any) -> Result[T, BE]:
       try:
         result = await func(*args, **kwargs)
-      except errors as e:
-        if isinstance(e, errors):
-          return Err(e)
-        raise
+      except exceptions as e:
+        return Err(e)
       return Ok(result)
 
     return wrapper
@@ -1131,7 +1127,7 @@ def catch_async(
   return decorator
 
 
-def _run_do(gen: Generator[Result[T, E], T | None, R]) -> Result[R, E]:
+def _run_do(gen: Generator[Result[T, E], T | None, T]) -> Result[T, E]:
   try:
     value: T | None = None
     last_ok_result: Result[T, E] | None = None
@@ -1145,12 +1141,12 @@ def _run_do(gen: Generator[Result[T, E], T | None, R]) -> Result[R, E]:
     if e.args:
       return Ok(e.args[0])
     elif last_ok_result is not None:
-      return cast(Result[R, E], last_ok_result)
+      return cast(Result[T, E], last_ok_result)
     else:
-      return Ok(cast(R, None))
+      return Ok(cast(T, None))
 
 
-async def _run_do_async(gen: AsyncGenerator[Result[T, E], T | None]) -> Result[R, E]:
+async def _run_do_async(gen: AsyncGenerator[Result[T, E], T | None]) -> Result[T, E]:
   try:
     value: T | None = None
     last_ok_result: Result[T, E] | None = None
@@ -1164,6 +1160,6 @@ async def _run_do_async(gen: AsyncGenerator[Result[T, E], T | None]) -> Result[R
     if e.args:
       return Ok(e.args[0])
     elif last_ok_result is not None:
-      return cast(Result[R, E], last_ok_result)
+      return cast(Result[T, E], last_ok_result)
     else:
-      return Ok(cast(R, None))
+      return Ok(cast(T, None))

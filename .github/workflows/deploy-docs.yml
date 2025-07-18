@@ -27,7 +27,7 @@ jobs:
         run: pdm mkdocs-build
 
       - name: Install sshpass
-        run: sudo apt-get update && sudo apt-get install -y sshpass rsync
+        run: sudo apt-get update && sudo apt-get install -y sshpass
 
       - name: Add VPS to known_hosts
         run: |
@@ -38,5 +38,5 @@ jobs:
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
         run: |
-          sshpass -e rsync -avz --delete ./site/ \
-            ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/var/www/vhosts/simonwaiblinger.de/rustico.simonwaiblinger.de
+          tar -czf - -C ./site . | sshpass -e ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} \
+            "cd /var/www/vhosts/simonwaiblinger.de/rustico.simonwaiblinger.de && rm -rf * && tar -xzf -"

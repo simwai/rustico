@@ -5,7 +5,7 @@
 groups = ["default", "dev"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.0"
-content_hash = "sha256:3d546528440ac35d77e70a96ec0ebed005c7a1b1c1c1e08ab7443370126242b3"
+content_hash = "sha256:377d8d7ed6a1fdad303575e0b21e46279d9f8324d09c86199efbefb4a1b6c5eb"
 
 [[metadata.targets]]
 requires_python = ">=3.8"
@@ -49,6 +49,17 @@ files = [
     {file = "backrefs-5.7.post1-py38-none-any.whl", hash = "sha256:ec61b1ee0a4bfa24267f6b67d0f8c5ffdc8e0d7dc2f18a2685fd1d8d9187054a"},
     {file = "backrefs-5.7.post1-py39-none-any.whl", hash = "sha256:05c04af2bf752bb9a6c9dcebb2aff2fab372d3d9d311f2a138540e307756bd3a"},
     {file = "backrefs-5.7.post1.tar.gz", hash = "sha256:8b0f83b770332ee2f1c8244f4e03c77d127a0fa529328e6a0e77fa25bee99678"},
+]
+
+[[package]]
+name = "bracex"
+version = "2.5.post1"
+requires_python = ">=3.8"
+summary = "Bash style brace expander."
+groups = ["dev"]
+files = [
+    {file = "bracex-2.5.post1-py3-none-any.whl", hash = "sha256:13e5732fec27828d6af308628285ad358047cec36801598368cb28bc631dbaf6"},
+    {file = "bracex-2.5.post1.tar.gz", hash = "sha256:12c50952415bfa773d2d9ccb8e79651b8cdb1f31a42f6091b804f6ba2b4a66b6"},
 ]
 
 [[package]]
@@ -691,6 +702,22 @@ files = [
 ]
 
 [[package]]
+name = "mkdocs-awesome-pages-plugin"
+version = "2.9.2"
+requires_python = ">=3.7"
+summary = "An MkDocs plugin that simplifies configuring page titles and their order"
+groups = ["dev"]
+dependencies = [
+    "mkdocs>=1",
+    "natsort>=8.1.0",
+    "wcmatch>=7",
+]
+files = [
+    {file = "mkdocs_awesome_pages_plugin-2.9.2-py3-none-any.whl", hash = "sha256:9c795587695bd1ee85a8b7e43293005418df5a8b9ef296a3e628be427b693b4d"},
+    {file = "mkdocs_awesome_pages_plugin-2.9.2.tar.gz", hash = "sha256:c3f7d366ecfe99b64524c49a84d8e13c576c19a918ea2e6f59bb486a259313af"},
+]
+
+[[package]]
 name = "mkdocs-get-deps"
 version = "0.2.0"
 requires_python = ">=3.8"
@@ -752,6 +779,17 @@ marker = "platform_machine != \"ppc64le\" and platform_machine != \"s390x\""
 files = [
     {file = "more-itertools-10.5.0.tar.gz", hash = "sha256:5482bfef7849c25dc3c6dd53a6173ae4795da2a41a80faea6700d9f5846c5da6"},
     {file = "more_itertools-10.5.0-py3-none-any.whl", hash = "sha256:037b0d3203ce90cca8ab1defbbdac29d5f993fc20131f3664dc8d6acfa872aef"},
+]
+
+[[package]]
+name = "natsort"
+version = "8.4.0"
+requires_python = ">=3.7"
+summary = "Simple yet flexible natural sorting in Python."
+groups = ["dev"]
+files = [
+    {file = "natsort-8.4.0-py3-none-any.whl", hash = "sha256:4732914fb471f56b5cce04d7bae6f164a592c7712e1c85f9ef585e197299521c"},
+    {file = "natsort-8.4.0.tar.gz", hash = "sha256:45312c4a0e5507593da193dedd04abb1469253b601ecaf63445ad80f0a1ea581"},
 ]
 
 [[package]]
@@ -1356,6 +1394,20 @@ files = [
     {file = "watchdog-4.0.2-py3-none-win_amd64.whl", hash = "sha256:c344453ef3bf875a535b0488e3ad28e341adbd5a9ffb0f7d62cefacc8824ef2b"},
     {file = "watchdog-4.0.2-py3-none-win_ia64.whl", hash = "sha256:baececaa8edff42cd16558a639a9b0ddf425f93d892e8392a56bf904f5eff22c"},
     {file = "watchdog-4.0.2.tar.gz", hash = "sha256:b4dfbb6c49221be4535623ea4474a4d6ee0a9cef4a80b20c28db4d858b64e270"},
+]
+
+[[package]]
+name = "wcmatch"
+version = "10.0"
+requires_python = ">=3.8"
+summary = "Wildcard/glob file name matcher."
+groups = ["dev"]
+dependencies = [
+    "bracex>=2.1.1",
+]
+files = [
+    {file = "wcmatch-10.0-py3-none-any.whl", hash = "sha256:0dd927072d03c0a6527a20d2e6ad5ba8d0380e60870c383bc533b71744df7b7a"},
+    {file = "wcmatch-10.0.tar.gz", hash = "sha256:e72f0de09bba6a04e0de70937b0cf06e55f36f37b3deb422dfaf854b867b840a"},
 ]
 
 [[package]]

@@ -2,7 +2,8 @@
   "recommendations": [
     "ms-python.vscode-pylance",
     "charliermarsh.ruff",
-    "tamasfe.even-better-toml",
-    "davidanson.vscode-markdownlint"
+    "davidanson.vscode-markdownlint",
+    "ms-python.mypy-type-checker",
+    "shellomo.enhanced-toml"
   ]
 }

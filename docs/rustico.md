@@ -1,8 +1,8 @@
 <!-- markdownlint-disable -->
 
-<a href="..\..\src\rustico\rustico.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L0"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
-# <kbd>module</kbd> `rustico.rustico`
+# <kbd>module</kbd> `rustico`
 
 
 
@@ -13,14 +13,14 @@
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L879"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L859"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `as_result`
 
 ```python
 as_result(
-    *exceptions: 'type[TBE]'
-) → Callable[[Callable[, R]], Callable[, Result[R, TBE]]]
+    *exceptions: 'BE'
+) → Callable[[Callable[, T]], Callable[, Result[T, BE]]]
 ```
 
 Decorator that converts a function to return Result, catching specified exceptions as Err. 
@@ -39,14 +39,14 @@ parse_int("fail")  # Err(ValueError(...))
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L915"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L893"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `as_async_result`
 
 ```python
 as_async_result(
-    *exceptions: 'type[TBE]'
-) → Callable[[Callable[, Awaitable[R]]], Callable[, Awaitable[Result[R, TBE]]]]
+    *exceptions: 'type[BE]'
+) → Callable[[Callable[, Awaitable[T]]], Callable[, Awaitable[Result[T, BE]]]]
 ```
 
 Decorator that converts an async function to return Result, catching specified exceptions as Err. 
@@ -62,7 +62,7 @@ async def parse_int_async(x: str) -> int:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L950"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L926"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `is_ok`
 
@@ -82,7 +82,7 @@ is_ok(Err("fail"))  # False
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L965"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L941"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `is_err`
 
@@ -102,16 +102,16 @@ is_err(Err("fail"))  # True
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L980"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L956"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `match`
 
 ```python
 match(
     result: 'Result[T, E]',
-    ok_handler: 'Callable[[T], R]',
-    err_handler: 'Callable[[E], R] | None' = None
-) → R | None
+    ok_handler: 'Callable[[T], T]',
+    err_handler: 'Callable[[E], T] | None' = None
+) → T | None
 ```
 
 Pattern match on a Result and apply the appropriate handler function. 
@@ -144,14 +144,14 @@ formatted = match(
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L1018"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L994"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `do`
 
 ```python
 do(
-    fn_or_gen: 'Callable[, Generator[Result[T, E], T, R]] | Generator[Result[T, E], T, R]'
-) → Callable[[], Result[R, E]] | Result[R, E]
+    fn_or_gen: 'Callable[, Generator[Result[T, E], T | None, T]] | Generator[Result[T, E], T | None, T]'
+) → Callable[[], Result[T, E]] | Result[T, E]
 ```
 
 Dual-purpose function for emulating do-notation with Result types. 
@@ -171,7 +171,7 @@ my_func()  # Ok(5)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L1056"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1030"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `do_async`
 
@@ -196,12 +196,14 @@ async def my_func() -> AsyncGenerator[...]:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L1090"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1064"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `catch`
 
 ```python
-catch(*errors: 'type[E]') → Callable[[Callable[, T]], Callable[, Result[T, E]]]
+catch(
+    *exceptions: 'type[BE]'
+) → Callable[[Callable[, T]], Callable[, Result[T, BE]]]
 ```
 
 Decorator that catches specified exceptions and returns them as Err Results. 
@@ -217,14 +219,14 @@ def parse(x: str) -> int:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L1120"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L1096"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `catch_async`
 
 ```python
 catch_async(
-    *errors: 'type[E]'
-) → Callable[[Callable[, Awaitable[T]]], Callable[, Awaitable[Result[T, E]]]]
+    *exceptions: 'type[BE]'
+) → Callable[[Callable[, Awaitable[T]]], Callable[, Awaitable[Result[T, BE]]]]
 ```
 
 Decorator that catches specified exceptions in async functions and returns them as Err Results. 
@@ -240,7 +242,7 @@ async def parse_async(x: str) -> int:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L34"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L32"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `UnwrapError`
 Exception raised when an unwrap or expect operation fails on a Result. 
@@ -253,12 +255,12 @@ except UnwrapError as e:
 # Called `Result.unwrap()` on an `Err` value: 'fail'
 ``` 
 
-<a href="..\..\src\rustico\rustico.py#L49"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L47"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
 ```python
-__init__(result: 'Result[object, object]', message: 'str') → None
+__init__(result: 'Result[T, E]', message: 'str') → None
 ```
 
 
@@ -286,7 +288,7 @@ except UnwrapError as e:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L72"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L70"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Ok`
 Represents a successful result containing a value. 
@@ -297,7 +299,7 @@ Use when operations succeed and you want to chain further operations. Avoid when
 Ok(42).unwrap()  # 42
 ``` 
 
-<a href="..\..\src\rustico\rustico.py#L87"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L85"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -326,7 +328,7 @@ Ok(2).ok_value  # 2
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L195"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L179"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `alt`
 
@@ -344,7 +346,7 @@ Ok(1).alt(lambda e: 0)  # Ok(1)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L372"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L356"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then`
 
@@ -362,7 +364,7 @@ Ok(2).and_then(lambda x: Ok(x * 2))  # Ok(4)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L385"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L369"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then_async`
 
@@ -380,7 +382,7 @@ await Ok(2).and_then_async(async_lambda)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L141"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L139"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `err`
 
@@ -398,7 +400,7 @@ Ok(1).err()  # None
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L208"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L192"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect`
 
@@ -416,7 +418,7 @@ Ok(1).expect("should not fail")  # 1
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L221"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L205"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect_err`
 
@@ -437,7 +439,7 @@ except UnwrapError:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L411"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L395"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect`
 
@@ -455,7 +457,7 @@ Ok(2).inspect(print)  # prints 2, returns Ok(2)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L425"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L409"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect_err`
 
@@ -473,7 +475,7 @@ Ok(2).inspect_err(print)  # Ok(2), nothing printed
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L115"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L113"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_err`
 
@@ -491,7 +493,7 @@ Ok(1).is_err()  # False
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L102"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_ok`
 
@@ -509,7 +511,7 @@ Ok(1).is_ok()  # True
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L305"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L289"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -527,7 +529,7 @@ Ok(2).map(lambda x: x * 10)  # Ok(20)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L319"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L303"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_async`
 
@@ -545,7 +547,7 @@ await Ok(2).map_async(async_lambda)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L359"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L343"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_err`
 
@@ -563,7 +565,7 @@ Ok(2).map_err(lambda e: 0)  # Ok(2)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L333"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L317"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or`
 
@@ -581,7 +583,7 @@ Ok(2).map_or(0, lambda x: x * 2)  # 4
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L346"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L330"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or_else`
 
@@ -599,7 +601,7 @@ Ok(2).map_or_else(lambda: 0, lambda x: x * 2)  # 4
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L438"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L422"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match`
 
@@ -620,7 +622,7 @@ Ok(1).match(ok=lambda x: f"Got {x}", err=lambda e: f"Error: {e}")  # 'Got 1'
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L128"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L126"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `ok`
 
@@ -638,7 +640,7 @@ Ok(1).ok()  # 1
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L398"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L382"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `or_else`
 
@@ -656,25 +658,7 @@ Ok(2).or_else(lambda e: Ok(0))  # Ok(2)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L168"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `swap`
-
-```python
-swap() → Err[T]
-```
-
-Converts Ok to Err with the same value, swapping success/failure semantics. 
-
-Use when you need to invert the meaning of success/failure in your logic. Common in testing scenarios or when adapting between different Result conventions. Avoid in normal business logic where semantics should remain consistent. 
-
-```
-Ok("x").swap()  # Err('x')
-``` 
-
----
-
-<a href="..\..\src\rustico\rustico.py#L237"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L221"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap`
 
@@ -692,7 +676,7 @@ Ok(1).unwrap()  # 1
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L250"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L234"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_err`
 
@@ -713,7 +697,7 @@ except UnwrapError:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L266"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L250"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or`
 
@@ -731,7 +715,7 @@ Ok(1).unwrap_or(0)  # 1
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L279"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L263"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_else`
 
@@ -749,12 +733,12 @@ Ok(1).unwrap_or_else(lambda e: 0)  # 1
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L292"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L276"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_raise`
 
 ```python
-unwrap_or_raise(e: 'object') → T
+unwrap_or_raise(e: 'E') → T
 ```
 
 Returns the contained value, ignoring the exception since Ok cannot fail. 
@@ -767,7 +751,7 @@ Ok(1).unwrap_or_raise(Exception)  # 1
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L182"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L166"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `value_or`
 
@@ -786,7 +770,7 @@ Ok(42).value_or(0)  # 42
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L454"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L438"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Err`
 Represents a failed result containing an error value. 
@@ -797,7 +781,7 @@ Use when operations fail and you want to propagate error information. Avoid when
 Err("fail").unwrap_or(0)  # 0
 ``` 
 
-<a href="..\..\src\rustico\rustico.py#L469"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L453"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -830,19 +814,15 @@ Returns the captured stack trace as a list of formatted strings for BaseExceptio
 
 Use for debugging and error reporting when the error value is an exception. Computed lazily to avoid performance overhead. Returns None for non-exception errors. Avoid when error value is not an exception. 
 
-```
-try:
-     raise ValueError("fail")
-except ValueError as e:
-     err = Err(e)
-     print(err.trace)
-``` 
+
+
+try:  raise ValueError("fail") except ValueError as e:  err = Err(e)  print(err.trace) 
 
 
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L608"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L577"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `alt`
 
@@ -860,7 +840,7 @@ Err(1).alt(lambda e: e + 1)  # Err(2)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L793"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L773"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then`
 
@@ -878,7 +858,7 @@ Err("fail").and_then(lambda x: Ok(x * 2))  # Err('fail')
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L806"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L786"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then_async`
 
@@ -896,7 +876,7 @@ await Err("fail").and_then_async(lambda x: Ok(x * 2))  # Err('fail')
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L554"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L537"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `err`
 
@@ -914,7 +894,7 @@ Err("fail").err()  # "fail"
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L622"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L591"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect`
 
@@ -935,7 +915,7 @@ except UnwrapError:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L641"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L610"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect_err`
 
@@ -953,7 +933,7 @@ Err("fail").expect_err("should be error")  # "fail"
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L832"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L812"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect`
 
@@ -971,7 +951,7 @@ Err("fail").inspect(print)  # Err('fail'), nothing printed
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L845"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L825"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect_err`
 
@@ -989,7 +969,7 @@ Err("fail").inspect_err(print)  # prints 'fail', returns Err('fail')
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L528"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L511"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_err`
 
@@ -1007,7 +987,7 @@ Err("fail").is_err()  # True
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L515"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L498"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_ok`
 
@@ -1025,7 +1005,7 @@ Err("fail").is_ok()  # False
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L728"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L708"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -1043,7 +1023,7 @@ Err("fail").map(lambda x: x * 2)  # Err('fail')
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L741"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L721"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_async`
 
@@ -1061,7 +1041,7 @@ await Err("fail").map_async(lambda x: x * 2)  # Err('fail')
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L780"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L760"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_err`
 
@@ -1079,7 +1059,7 @@ Err(2).map_err(lambda e: e + 1)  # Err(3)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L754"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L734"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or`
 
@@ -1097,7 +1077,7 @@ Err("fail").map_or(0, lambda x: x * 2)  # 0
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L767"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L747"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or_else`
 
@@ -1115,7 +1095,7 @@ Err("fail").map_or_else(lambda: 42, lambda x: x * 2)  # 42
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L859"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L839"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match`
 
@@ -1136,7 +1116,7 @@ Err("fail").match(ok=lambda x: f"Got {x}", err=lambda e: f"Error: {e}")  # 'Erro
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L541"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L524"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `ok`
 
@@ -1154,12 +1134,12 @@ Err("fail").ok()  # None
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L819"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L799"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `or_else`
 
 ```python
-or_else(op: 'Callable[[E], Result[T, F]]') → Result[T, F]
+or_else(op: 'Callable[[E], Result[T, E]]') → Result[T, E]
 ```
 
 Applies error recovery operation to the contained error value (monadic bind for errors). 
@@ -1172,25 +1152,7 @@ Err(2).or_else(lambda e: Ok(e + 1))  # Ok(3)
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L581"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
-
-### <kbd>method</kbd> `swap`
-
-```python
-swap() → Ok[E]
-```
-
-Converts Err to Ok with the error value, swapping failure/success semantics. 
-
-Use when you need to invert the meaning of success/failure in your logic. Common in testing scenarios or when adapting between different Result conventions. Avoid in normal business logic where semantics should remain consistent. 
-
-```
-Err("fail").swap()  # Ok('fail')
-``` 
-
----
-
-<a href="..\..\src\rustico\rustico.py#L654"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L623"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap`
 
@@ -1202,6 +1164,18 @@ Always raises UnwrapError since Err instances don't contain success values.
 
 Use when you expect success but got failure - indicates a logic error. Common for fail-fast scenarios and debugging. Avoid in normal error handling. 
 
+
+--- 
+
+The `unwrap()` method is powerful but should be used with caution. It's designed for situations where you are **certain** the `Result` holds a successful value (`Ok`). 
+
+*   If you call `result.unwrap()` on an `Ok` instance, it safely returns the contained value. *   However, if you call `result.unwrap()` on an `Err` instance, it will **raise an `UnwrapError` exception**. This is a "fail-fast" mechanism, indicating an unexpected error or a logical flaw in your code. 
+
+For robust error handling where you expect and want to gracefully manage potential errors, prefer using methods like `is_ok()`, `is_err()`, `unwrap_or()`, `unwrap_or_else()`, `and_then()`, or Python's `match` statement to process the `Result` without risking an exception. 
+
+
+--- 
+
 ```
 try:
      Err("fail").unwrap()
@@ -1211,7 +1185,7 @@ except UnwrapError:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L673"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L653"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_err`
 
@@ -1229,7 +1203,7 @@ Err("fail").unwrap_err()  # "fail"
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L686"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L666"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or`
 
@@ -1247,7 +1221,7 @@ Err("fail").unwrap_or(0)  # 0
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L699"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L679"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_else`
 
@@ -1265,12 +1239,12 @@ Err(2).unwrap_or_else(lambda e: e + 1)  # 3
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L712"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L692"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_raise`
 
 ```python
-unwrap_or_raise(e: 'type[TBE]') → NoReturn
+unwrap_or_raise(e: 'E') → NoReturn
 ```
 
 Raises the provided exception type with the error value as the message. 
@@ -1286,7 +1260,7 @@ except ValueError:
 
 ---
 
-<a href="..\..\src\rustico\rustico.py#L595"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L564"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `value_or`
 

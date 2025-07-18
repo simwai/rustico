@@ -264,7 +264,7 @@ These examples demonstrate how `rustico` can be used in various real-world scena
 ## Next Steps
 
 - [Read the Quick Start guide](quickstart.md) for more examples
-- [Check the API Reference](api\rustico.rustico.md) for detailed documentation
+- [Check the API Reference](rustico.md) for detailed documentation
 - [Contribute to rustico](contributing.md) to help improve the library
 
 [Back to Top](#examples){ .md-button }

@@ -87,10 +87,6 @@ class TestOk:
     with pytest.raises(UnwrapError):
       Ok(10).unwrap_err()
 
-  def test_ok_swap(self):
-    """✅ Test: Business Logic - swap turns an Ok into an Err."""
-    assert Ok('value').swap() == Err('value')
-
   def test_ok_value_or(self):
     """✅ Test: Business Logic - value_or returns the value, not the default."""
     assert Ok(42).value_or(0) == 42
@@ -156,10 +152,6 @@ class TestErr:
     """✅ Test: Error Handling - expect on Err raises UnwrapError with a custom message."""
     with pytest.raises(UnwrapError, match="Custom message: 'fail'"):
       Err('fail').expect('Custom message')
-
-  def test_err_swap(self):
-    """✅ Test: Business Logic - swap turns an Err into an Ok."""
-    assert Err('error').swap() == Ok('error')
 
   def test_err_value_or(self):
     """✅ Test: Business Logic - value_or returns the default value."""
@@ -239,7 +231,7 @@ class TestDecorators:
 
   def test_as_result_requires_exception_types(self):
     """✅ Test: Error Handling - @as_result raises TypeError for invalid args."""
-    expected_message = re.escape('as_result() requires one or more exception types')
+    expected_message = re.escape('as_result() requires at least one exception type')
     with pytest.raises(TypeError, match=expected_message):
 
       @as_result('not a type')
@@ -431,3 +423,33 @@ class TestTypeGuards:
     """✅ Test: Business Logic - is_err correctly identifies Err types."""
     assert is_err(Err(1)) is True
     assert is_err(Ok(1)) is False
+
+
+# --- Unit Tests for match ---
+class TestErrMatch:
+  def test_err_match_with_both_handlers(self):
+    result = Err('fail').match(ok=lambda x: f'Got {x}', err=lambda e: f'Error: {e}')
+    assert result == 'Error: fail'
+
+  def test_err_match_with_only_err_handler(self):
+    result = Err('fail').match(err=lambda e: f'Error: {e}')
+    assert result == 'Error: fail'
+
+  def test_err_match_with_none_value(self):
+    result = Err(None).match(err=lambda e: 'Got None error')
+    assert result == 'Got None error'
+
+  def test_err_match_with_complex_handler(self):
+    def complex_handler(e):
+      return {'error': str(e), 'code': 500}
+
+    result = Err('server error').match(err=complex_handler)
+    assert result == {'error': 'server error', 'code': 500}
+
+  def test_err_match_missing_err_handler_raises(self):
+    with pytest.raises(ValueError, match="Err.match requires an 'err' handler"):
+      Err('fail').match(ok=lambda x: f'Got {x}')
+
+  def test_err_match_with_type_conversion(self):
+    result = Err(404).match(err=lambda e: str(e))
+    assert result == '404'

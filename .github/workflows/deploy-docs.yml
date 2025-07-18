@@ -1,0 +1,38 @@
+name: Deploy MkDocs
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.8.20
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8.20"
+
+      - name: Install MkDocs toolchain
+        run: |
+          pip install \
+            mkdocs==1.6.1 \
+            mkdocs-material==9.6.15 \
+            mkdocs-awesome-pages-plugin==2.9.2
+
+      - name: Build documentation
+        run: pdm mkdocs-build
+
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Deploy to VPS
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          sshpass -e rsync -avz --delete ./site/ \
+            root@${{ secrets.SSH_HOST }}:/var/www/vhosts/simonwaiblinger.de/rustico.simonwaiblinger.de/httpdocs/

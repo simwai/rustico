@@ -906,7 +906,7 @@ def as_async_result(
   ```
   """
   if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):
-    raise TypeError('as_result() requires at least one exception type')
+    raise TypeError('as_result_async() requires at least one exception type')
 
   def decorator(
     f: Callable[..., Awaitable[T]],

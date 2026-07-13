@@ -5,7 +5,7 @@ import inspect
 import traceback
 import warnings
 from collections.abc import AsyncGenerator, Awaitable, Callable, Generator
-from typing import Any, Generic, Literal, NoReturn, TypeVar, Union, cast
+from typing import Any, Generic, Literal, NoReturn, TypeVar, cast
 
 try:
   from typing import ParamSpec
@@ -30,6 +30,21 @@ E = TypeVar('E')
 R = TypeVar('R')
 P = ParamSpec('P')  # Captures the parameter types of the decorated function.
 BE = TypeVar('BE', bound=BaseException)
+
+
+class Result(Generic[T, E]):
+  """Base class for Ok (success) and Err (failure) variants.
+
+  Use this for isinstance checks instead of the deprecated OkErr tuple.
+  Provides no methods itself — use Ok/Err methods directly.
+
+  ```
+  isinstance(Ok(42), Result)  # True
+  isinstance(Err("fail"), Result)  # True
+  ```
+  """
+
+  __slots__ = ()
 
 
 class UnwrapError(Exception, Generic[T, E]):
@@ -70,7 +85,7 @@ class UnwrapError(Exception, Generic[T, E]):
     return self._result
 
 
-class Ok(Generic[T]):
+class Ok(Result[T, Any]):
   """
   Represents a successful result containing a value.
 
@@ -438,7 +453,7 @@ class Ok(Generic[T]):
     return ok(self._value)
 
 
-class Err(Generic[E]):
+class Err(Result[Any, E]):
   """
   Represents a failed result containing an error value.
 
@@ -855,9 +870,6 @@ class Err(Generic[E]):
     return err(self._value)
 
 
-Result = Union[Ok[T], Err[E]]
-
-
 def _validate_exception_types(exceptions: tuple[type[BE], ...], decorator_name: str) -> None:
   if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):
     msg = f'{decorator_name}() requires at least one exception type'
@@ -963,36 +975,36 @@ def match(result: Result[T, E], ok_handler: Callable[[T], R], err_handler: Calla
   """
   **Deprecated:** Use `result.match(ok=..., err=...)` instead.
 
-  This function is deprecated and will be removed in v2.0.
+  This function is deprecated and has been removed in v2.0.
 
-  Pattern match on a Result and apply the appropriate handler function.
+    Pattern match on a Result and apply the appropriate handler function.
 
-  This function provides a functional, explicit alternative to Python's pattern matching syntax,
-  allowing you to handle both success (`Ok`) and error (`Err`) cases with dedicated handler functions.
-  It's especially useful when you want to transform or branch on the contents of a Result
-  without unwrapping it or writing conditional logic.
+    This function provides a functional, explicit alternative to Python's pattern matching syntax,
+    allowing you to handle both success (`Ok`) and error (`Err`) cases with dedicated handler functions.
+    It's especially useful when you want to transform or branch on the contents of a Result
+    without unwrapping it or writing conditional logic.
 
-  **When to use:**
-  - When you want to handle both success and error cases in a single, readable expression.
-  - When you want to transform a Result into another value or type, e.g., for logging, formatting, or fallback logic.
-  - When you want to avoid `try/except` and keep error handling explicit and composable.
+    **When to use:**
+    - When you want to handle both success and error cases in a single, readable expression.
+    - When you want to transform a Result into another value or type, e.g., for logging, formatting, or fallback logic.
+    - When you want to avoid `try/except` and keep error handling explicit and composable.
 
-  **When not to use:**
-  - When you only care about the success value and want to fail fast (use `unwrap` or `unwrap_or`).
-  - When you only want to transform the success or error value (use `map` or `map_err`).
-  - When you need to propagate the Result further without handling it yet.
+    **When not to use:**
+    - When you only care about the success value and want to fail fast (use `unwrap` or `unwrap_or`).
+    - When you only want to transform the success or error value (use `map` or `map_err`).
+    - When you need to propagate the Result further without handling it yet.
 
 
-  ```
-  result = get_user_age()  # Returns Result[int, str]
-  formatted = match(
-      result,
-      ok_handler=lambda age: f"User is {age} years old",
-      err_handler=lambda err: f"Error getting age: {err}"
-  )
-  # Ok case: "User is 25 years old"
-  # Err case: "Error getting age: Invalid user data"
-  ```
+    ```
+    result = get_user_age()  # Returns Result[int, str]
+    formatted = match(
+        result,
+        ok_handler=lambda age: f"User is {age} years old",
+        err_handler=lambda err: f"Error getting age: {err}"
+    )
+    # Ok case: "User is 25 years old"
+    # Err case: "Error getting age: Invalid user data"
+    ```
   """
   warnings.warn(
     'match() is deprecated, use result.match(ok=..., err=...) instead',

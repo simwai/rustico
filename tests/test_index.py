@@ -560,17 +560,6 @@ class TestOkMatch:
 
 
 class TestDeprecations:
-  def test_okerr_deprecation_warning(self) -> None:
-    import rustico
-    with pytest.warns(DeprecationWarning, match='OkErr is deprecated'):
-      _ = rustico.OkErr
-
-  def test_okerr_still_accessible(self) -> None:
-    import rustico
-    with pytest.warns(DeprecationWarning, match='OkErr is deprecated'):
-      okerr = rustico.OkErr
-    assert okerr == (Ok, Err)
-
   def test_match_function_deprecation_warning(self) -> None:
     from rustico import match
     with pytest.warns(DeprecationWarning, match='match\\(\\) is deprecated'):

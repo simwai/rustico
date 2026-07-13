@@ -13,3 +13,10 @@ repos:
         language: python
         pass_filenames: false
         types: [python]
+      - id: pdm-docs
+        name: pdm docs
+        entry: pdm lazydocs-build
+        language: python
+        pass_filenames: false
+        files: ^src/
+        types: [python]

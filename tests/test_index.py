@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import re
-from typing import AsyncGenerator, Generator
+from typing import Any, AsyncGenerator, Generator, NoReturn
 
 import pytest
 
@@ -36,7 +38,7 @@ async def async_div(a: int, b: int) -> Result[float, str]:
 
 
 class TestOk:
-  def test_ok_creation_and_value(self):
+  def test_ok_creation_and_value(self) -> None:
     """✅ Test: Business Logic - Ok should hold and return its value."""
     ok_val = Ok(42)
     assert ok_val.is_ok()
@@ -47,55 +49,55 @@ class TestOk:
     assert ok_val.expect('Should not fail') == 42
     assert ok_val.err() is None
 
-  def test_ok_equality(self):
+  def test_ok_equality(self) -> None:
     """✅ Test: Business Logic - Ok instances with same value should be equal."""
     assert Ok(10) == Ok(10)
     assert Ok(10) != Ok(20)
     assert Ok(10) != Err(10)
     assert Ok(10) != 10
 
-  def test_ok_map(self):
+  def test_ok_map(self) -> None:
     """✅ Test: Business Logic - map transforms the inner value."""
     assert Ok(5).map(lambda x: x * 2) == Ok(10)
 
   @pytest.mark.asyncio
-  async def test_ok_map_async(self):
+  async def test_ok_map_async(self) -> None:
     """✅ Test: System Interactions - map_async transforms value with an async func."""
 
-    async def double(x):
+    async def double(x: int) -> int:
       return x * 2
 
     assert await Ok(5).map_async(double) == Ok(10)
 
-  def test_ok_and_then(self):
+  def test_ok_and_then(self) -> None:
     """✅ Test: Business Logic - and_then chains with another Result-producing function."""
     assert Ok(10).and_then(lambda x: sync_div(x, 2)) == Ok(5.0)
     assert Ok(10).and_then(lambda x: sync_div(x, 0)) == Err('Cannot divide by zero')
 
   @pytest.mark.asyncio
-  async def test_ok_and_then_async(self):
+  async def test_ok_and_then_async(self) -> None:
     """✅ Test: System Interactions - and_then_async chains with an async Result func."""
     assert await Ok(10).and_then_async(lambda x: async_div(x, 2)) == Ok(5.0)
     assert await Ok(10).and_then_async(lambda x: async_div(x, 0)) == Err('Cannot divide by zero')
 
-  def test_ok_or_else_is_noop(self):
+  def test_ok_or_else_is_noop(self) -> None:
     """✅ Test: Business Logic - or_else has no effect on Ok."""
     assert Ok(100).or_else(lambda e: Err(f'Error: {e}')) == Ok(100)
 
-  def test_ok_unwrap_err_raises(self):
+  def test_ok_unwrap_err_raises(self) -> None:
     """✅ Test: Error Handling - unwrap_err on Ok must raise UnwrapError."""
     with pytest.raises(UnwrapError):
       Ok(10).unwrap_err()
 
-  def test_ok_value_or(self):
+  def test_ok_value_or(self) -> None:
     """✅ Test: Business Logic - value_or returns the value, not the default."""
     assert Ok(42).value_or(0) == 42
 
-  def test_ok_inspect(self):
+  def test_ok_inspect(self) -> None:
     """✅ Test: Business Logic - inspect runs a side-effect on Ok value."""
     inspected_val = None
 
-    def side_effect(v):
+    def side_effect(v: int) -> None:
       nonlocal inspected_val
       inspected_val = v
 
@@ -103,9 +105,44 @@ class TestOk:
     assert result == Ok(123)
     assert inspected_val == 123
 
+  def test_ok_inspect_err_is_noop(self) -> None:
+    """✅ Test: Business Logic - inspect_err has no effect on Ok."""
+    result = Ok(42).inspect_err(lambda _: 1 / 0)  # should never be called
+    assert result == Ok(42)
+
+  def test_ok_map_or(self) -> None:
+    """✅ Test: Business Logic - map_or transforms value, ignores default."""
+    assert Ok(2).map_or(0, lambda x: x * 2) == 4
+
+  def test_ok_map_or_else(self) -> None:
+    """✅ Test: Business Logic - map_or_else transforms value, ignores default op."""
+    assert Ok(2).map_or_else(lambda: 0, lambda x: x * 2) == 4
+
+  def test_ok_unwrap_or(self) -> None:
+    """✅ Test: Business Logic - unwrap_or returns the value, not the default."""
+    assert Ok(42).unwrap_or(0) == 42
+
+  def test_ok_unwrap_or_else(self) -> None:
+    """✅ Test: Business Logic - unwrap_or_else returns value, ignores op."""
+    assert Ok(42).unwrap_or_else(lambda _: 0) == 42
+
+  def test_ok_unwrap_or_raise(self) -> None:
+    """✅ Test: Business Logic - unwrap_or_raise returns value, ignores exception."""
+    assert Ok(42).unwrap_or_raise(Exception) == 42
+
+  def test_ok_expect_err_raises(self) -> None:
+    """✅ Test: Error Handling - expect_err on Ok must raise UnwrapError."""
+    with pytest.raises(UnwrapError, match='should be error'):
+      Ok(42).expect_err('should be error')
+
+  def test_ok_match_without_handler_raises(self) -> None:
+    """✅ Test: Error Handling - Ok.match without ok handler raises ValueError."""
+    with pytest.raises(ValueError, match="Ok.match requires an 'ok' handler"):
+      Ok(42).match(err=lambda e: f'err: {e}')
+
 
 class TestErr:
-  def test_err_creation_and_value(self):
+  def test_err_creation_and_value(self) -> None:
     """✅ Test: Business Logic - Err should hold and return its error."""
     err_val = Err('epic fail')
     assert err_val.is_err()
@@ -114,62 +151,62 @@ class TestErr:
     assert err_val.err_value == 'epic fail'
     assert err_val.ok() is None
 
-  def test_err_equality(self):
+  def test_err_equality(self) -> None:
     """✅ Test: Business Logic - Err instances with same value should be equal."""
     assert Err('fail') == Err('fail')
     assert Err('fail') != Err('other fail')
     assert Err('fail') != Ok('fail')
 
-  def test_err_map_is_noop(self):
+  def test_err_map_is_noop(self) -> None:
     """✅ Test: Business Logic - map has no effect on Err."""
     assert Err('fail').map(lambda x: x * 2) == Err('fail')
 
   @pytest.mark.asyncio
-  async def test_err_map_async_is_noop(self):
+  async def test_err_map_async_is_noop(self) -> None:
     """✅ Test: System Interactions - map_async has no effect on Err."""
 
-    async def double(x):
+    async def double(x: int) -> int:
       return x * 2
 
     assert await Err('fail').map_async(double) == Err('fail')
 
-  def test_err_and_then_is_noop(self):
+  def test_err_and_then_is_noop(self) -> None:
     """✅ Test: Business Logic - and_then has no effect on Err."""
     assert Err('fail').and_then(lambda x: sync_div(x, 2)) == Err('fail')
 
-  def test_err_or_else(self):
+  def test_err_or_else(self) -> None:
     """✅ Test: Business Logic - or_else transforms an error."""
     assert Err(0).or_else(lambda e: sync_div(10, e + 2)) == Ok(5.0)
     assert Err('fail').or_else(lambda e: Err(f'New error: {e}')) == Err('New error: fail')
 
-  def test_err_unwrap_raises(self):
+  def test_err_unwrap_raises(self) -> None:
     """✅ Test: Error Handling - unwrap on Err must raise UnwrapError."""
     expected_message = re.escape("Called `Result.unwrap()` on an `Err` value: 'fail'")
     with pytest.raises(UnwrapError, match=expected_message):
       Err('fail').unwrap()
 
-  def test_err_expect_raises(self):
+  def test_err_expect_raises(self) -> None:
     """✅ Test: Error Handling - expect on Err raises UnwrapError with a custom message."""
     with pytest.raises(UnwrapError, match="Custom message: 'fail'"):
       Err('fail').expect('Custom message')
 
-  def test_err_value_or(self):
+  def test_err_value_or(self) -> None:
     """✅ Test: Business Logic - value_or returns the default value."""
     assert Err('error').value_or(0) == 0
 
-  def test_err_alt(self):
+  def test_err_alt(self) -> None:
     """✅ Test: Business Logic - alt transforms the error value."""
     assert Err('oops').alt(str.upper) == Err('OOPS')
 
-  def test_err_map_err(self):
+  def test_err_map_err(self) -> None:
     """✅ Test: Business Logic - map_err is an alias for alt."""
     assert Err('oops').map_err(str.upper) == Err('OOPS')
 
-  def test_err_inspect_err(self):
+  def test_err_inspect_err(self) -> None:
     """✅ Test: Business Logic - inspect_err runs a side-effect on Err value."""
     inspected_val = None
 
-    def side_effect(e):
+    def side_effect(e: str) -> None:
       nonlocal inspected_val
       inspected_val = e
 
@@ -177,11 +214,33 @@ class TestErr:
     assert result == Err('error_val')
     assert inspected_val == 'error_val'
 
-  def test_err_trace_capture(self):
+  def test_err_inspect_is_noop(self) -> None:
+    """✅ Test: Business Logic - inspect has no effect on Err."""
+    result = Err('fail').inspect(lambda _: 1 / 0)  # should never be called
+    assert result == Err('fail')
+
+  def test_err_map_or(self) -> None:
+    """✅ Test: Business Logic - map_or returns default on Err."""
+    assert Err('fail').map_or(0, lambda x: x * 2) == 0
+
+  def test_err_map_or_else(self) -> None:
+    """✅ Test: Business Logic - map_or_else calls default op on Err."""
+    assert Err('fail').map_or_else(lambda: 42, lambda x: x * 2) == 42
+
+  def test_err_unwrap_or_else(self) -> None:
+    """✅ Test: Business Logic - unwrap_or_else applies op to error value."""
+    assert Err(2).unwrap_or_else(lambda e: e + 1) == 3
+
+  def test_err_unwrap_or_raise(self) -> None:
+    """✅ Test: Error Handling - unwrap_or_raise raises the given exception."""
+    with pytest.raises(ValueError, match='fail'):
+      Err('fail').unwrap_or_raise(ValueError)
+
+  def test_err_trace_capture(self) -> None:
     """✅ Test: Error Handling - Err should capture a traceback for exceptions."""
 
     @as_result(ValueError)
-    def func_that_fails():
+    def func_that_fails() -> NoReturn:
       raise ValueError('fail')
 
     result = func_that_fails()
@@ -191,7 +250,7 @@ class TestErr:
     assert isinstance(result.trace, list)
     assert any('ValueError' in line and 'fail' in line for line in result.trace)
 
-  def test_err_trace_is_none_for_non_exceptions(self):
+  def test_err_trace_is_none_for_non_exceptions(self) -> None:
     """✅ Test: Error Handling - Err should not have a trace for non-exception values."""
     result = Err('just a string error')
     assert result.trace is None
@@ -199,61 +258,61 @@ class TestErr:
 
 # --- Integration Tests for Decorators ---
 class TestDecorators:
-  def test_as_result_success(self):
+  def test_as_result_success(self) -> None:
     """✅ Test: Critical Paths - @as_result should return Ok on success."""
 
     @as_result(ValueError)
-    def safe_func():
+    def safe_func() -> str:
       return 'success'
 
     assert safe_func() == Ok('success')
 
-  def test_as_result_catches_specified_error(self):
+  def test_as_result_catches_specified_error(self) -> None:
     """✅ Test: Error Handling - @as_result should catch specified exceptions."""
 
     @as_result(ValueError)
-    def safe_func():
+    def safe_func() -> NoReturn:
       raise ValueError('fail')
 
     result = safe_func()
     assert result.is_err()
     assert isinstance(result.err_value, ValueError)
 
-  def test_as_result_does_not_catch_unspecified_error(self):
+  def test_as_result_does_not_catch_unspecified_error(self) -> None:
     """✅ Test: Error Handling - @as_result should not catch other exceptions."""
 
     @as_result(TypeError)
-    def safe_func():
+    def safe_func() -> NoReturn:
       raise ValueError('fail')
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='fail'):
       safe_func()
 
-  def test_as_result_requires_exception_types(self):
+  def test_as_result_requires_exception_types(self) -> None:
     """✅ Test: Error Handling - @as_result raises TypeError for invalid args."""
     expected_message = re.escape('as_result() requires at least one exception type')
     with pytest.raises(TypeError, match=expected_message):
 
       @as_result('not a type')
-      def my_func():
+      def my_func() -> None:
         pass
 
   @pytest.mark.asyncio
-  async def test_as_async_result_success(self):
+  async def test_as_async_result_success(self) -> None:
     """✅ Test: Critical Paths - @as_async_result should return Ok on success."""
 
     @as_async_result(ValueError)
-    async def safe_async_func():
+    async def safe_async_func() -> str:
       return 'success'
 
     assert await safe_async_func() == Ok('success')
 
   @pytest.mark.asyncio
-  async def test_as_async_result_catches_error(self):
+  async def test_as_async_result_catches_error(self) -> None:
     """✅ Test: Error Handling - @as_async_result should catch exceptions."""
 
     @as_async_result(ValueError)
-    async def safe_async_func():
+    async def safe_async_func() -> NoReturn:
       raise ValueError('fail')
 
     result = await safe_async_func()
@@ -263,20 +322,20 @@ class TestDecorators:
 
 # --- Integration Tests for catch Decorators ---
 class TestCatchDecorators:
-  def test_catch_success(self):
+  def test_catch_success(self) -> None:
     """✅ Test: Critical Paths - @catch should return Ok on success."""
 
     @catch(MyCustomError)
-    def func():
+    def func() -> int:
       return 42
 
     assert func() == Ok(42)
 
-  def test_catch_handles_error(self):
+  def test_catch_handles_error(self) -> None:
     """✅ Test: Error Handling - @catch should return Err on specified exception."""
 
     @catch(MyCustomError)
-    def func():
+    def func() -> NoReturn:
       raise MyCustomError('it failed')
 
     result = func()
@@ -284,21 +343,21 @@ class TestCatchDecorators:
     assert isinstance(result.err_value, MyCustomError)
 
   @pytest.mark.asyncio
-  async def test_catch_async_success(self):
+  async def test_catch_async_success(self) -> None:
     """✅ Test: Critical Paths - @catch_async should return Ok on success."""
 
     @catch_async(MyCustomError)
-    async def func():
+    async def func() -> int:
       return 42
 
     assert await func() == Ok(42)
 
   @pytest.mark.asyncio
-  async def test_catch_async_handles_error(self):
+  async def test_catch_async_handles_error(self) -> None:
     """✅ Test: Error Handling - @catch_async should return Err on specified exception."""
 
     @catch_async(MyCustomError)
-    async def func():
+    async def func() -> NoReturn:
       raise MyCustomError('it failed async')
 
     result = await func()
@@ -309,7 +368,7 @@ class TestCatchDecorators:
 # --- Unit Tests for Do Notation ---
 class TestDoNotation:
   # --- Sync `do` decorator tests ---
-  def test_do_decorator_success(self):
+  def test_do_decorator_success(self) -> None:
     """✅ Test: @do decorator succeeds with all Ok values."""
 
     @do
@@ -320,7 +379,7 @@ class TestDoNotation:
 
     assert do_logic() == Ok(30)
 
-  def test_do_decorator_failure(self):
+  def test_do_decorator_failure(self) -> None:
     """✅ Test: @do decorator fails on the first Err value."""
 
     @do
@@ -332,7 +391,7 @@ class TestDoNotation:
     assert do_logic() == Err('something went wrong')
 
   # --- Sync `do` helper function tests ---
-  def test_do_helper_success(self):
+  def test_do_helper_success(self) -> None:
     """✅ Test: do() helper succeeds with all Ok values."""
 
     def do_logic() -> Generator[Result[int, str], None, int]:
@@ -342,7 +401,7 @@ class TestDoNotation:
 
     assert do(do_logic()) == Ok(30)
 
-  def test_do_helper_failure(self):
+  def test_do_helper_failure(self) -> None:
     """✅ Test: do() helper fails on the first Err value."""
 
     def do_logic() -> Generator[Result[int, str], None, int]:
@@ -354,7 +413,7 @@ class TestDoNotation:
 
   # --- Async `do_async` decorator tests ---
   @pytest.mark.asyncio
-  async def test_do_async_decorator_success(self):
+  async def test_do_async_decorator_success(self) -> None:
     """✅ Test: @do_async decorator succeeds with all Ok values."""
 
     @do_async
@@ -366,7 +425,7 @@ class TestDoNotation:
     assert await do_logic() == Ok(30)
 
   @pytest.mark.asyncio
-  async def test_do_async_decorator_failure(self):
+  async def test_do_async_decorator_failure(self) -> None:
     """✅ Test: @do_async decorator fails on the first Err value."""
 
     @do_async
@@ -379,7 +438,7 @@ class TestDoNotation:
 
   # --- Async `do_async` helper function tests ---
   @pytest.mark.asyncio
-  async def test_do_async_helper_success(self):
+  async def test_do_async_helper_success(self) -> None:
     """✅ Test: do_async() helper succeeds with all Ok values."""
 
     async def do_logic() -> AsyncGenerator[Result[int, str], None]:
@@ -390,7 +449,7 @@ class TestDoNotation:
     assert await do_async(do_logic()) == Ok(30)
 
   @pytest.mark.asyncio
-  async def test_do_async_helper_failure(self):
+  async def test_do_async_helper_failure(self) -> None:
     """✅ Test: do_async() helper fails on the first Err value."""
 
     async def do_logic() -> AsyncGenerator[Result[int, str], None]:
@@ -400,26 +459,46 @@ class TestDoNotation:
 
     assert await do_async(do_logic()) == Err('async error')
 
-  # --- Edge Case Test ---
-  def test_do_raises_on_async_generator(self):
+  # --- Edge Case Tests ---
+  def test_do_raises_on_async_generator(self) -> None:
     """✅ Test: Error Handling - sync `do` raises TypeError for async generators."""
 
-    async def async_gen():
+    async def async_gen() -> AsyncGenerator[int, None]:
       yield Ok(1)
 
-    # Assuming your dual-purpose `do` raises a TypeError for wrong generator type
     with pytest.raises(TypeError):
       do(async_gen())
+
+  def test_do_raises_on_non_generator(self) -> None:
+    """✅ Test: Error Handling - sync `do` raises TypeError if function doesn't yield."""
+
+    @do
+    def not_a_generator() -> int:
+      return 42
+
+    with pytest.raises(TypeError, match='must return a Generator'):
+      not_a_generator()
+
+  @pytest.mark.asyncio
+  async def test_do_async_raises_on_non_generator(self) -> None:
+    """✅ Test: Error Handling - async `do` raises TypeError if function doesn't yield."""
+
+    @do_async
+    async def not_a_generator() -> int:
+      return 42
+
+    with pytest.raises(TypeError, match='must return an AsyncGenerator'):
+      await not_a_generator()
 
 
 # --- Unit Tests for Type Guards ---
 class TestTypeGuards:
-  def test_is_ok(self):
+  def test_is_ok(self) -> None:
     """✅ Test: Business Logic - is_ok correctly identifies Ok types."""
     assert is_ok(Ok(1)) is True
     assert is_ok(Err(1)) is False
 
-  def test_is_err(self):
+  def test_is_err(self) -> None:
     """✅ Test: Business Logic - is_err correctly identifies Err types."""
     assert is_err(Err(1)) is True
     assert is_err(Ok(1)) is False
@@ -427,29 +506,78 @@ class TestTypeGuards:
 
 # --- Unit Tests for match ---
 class TestErrMatch:
-  def test_err_match_with_both_handlers(self):
+  def test_err_match_with_both_handlers(self) -> None:
     result = Err('fail').match(ok=lambda x: f'Got {x}', err=lambda e: f'Error: {e}')
     assert result == 'Error: fail'
 
-  def test_err_match_with_only_err_handler(self):
+  def test_err_match_with_only_err_handler(self) -> None:
     result = Err('fail').match(err=lambda e: f'Error: {e}')
     assert result == 'Error: fail'
 
-  def test_err_match_with_none_value(self):
-    result = Err(None).match(err=lambda e: 'Got None error')
+  def test_err_match_with_none_value(self) -> None:
+    result = Err(None).match(err=lambda _: 'Got None error')
     assert result == 'Got None error'
 
-  def test_err_match_with_complex_handler(self):
-    def complex_handler(e):
+  def test_err_match_with_complex_handler(self) -> None:
+    def complex_handler(e: str) -> dict[str, Any]:
       return {'error': str(e), 'code': 500}
 
     result = Err('server error').match(err=complex_handler)
     assert result == {'error': 'server error', 'code': 500}
 
-  def test_err_match_missing_err_handler_raises(self):
+  def test_err_match_missing_err_handler_raises(self) -> None:
     with pytest.raises(ValueError, match="Err.match requires an 'err' handler"):
       Err('fail').match(ok=lambda x: f'Got {x}')
 
-  def test_err_match_with_type_conversion(self):
+  def test_err_match_with_type_conversion(self) -> None:
     result = Err(404).match(err=lambda e: str(e))
     assert result == '404'
+
+
+class TestOkMatch:
+  def test_ok_match_with_both_handlers(self) -> None:
+    result = Ok(42).match(ok=lambda x: f'Got {x}', err=lambda e: f'Error: {e}')
+    assert result == 'Got 42'
+
+  def test_ok_match_with_only_ok_handler(self) -> None:
+    result = Ok(42).match(ok=lambda x: f'Got {x}')
+    assert result == 'Got 42'
+
+  def test_ok_match_with_none_value(self) -> None:
+    result = Ok(None).match(ok=lambda _: 'Got None')
+    assert result == 'Got None'
+
+  def test_ok_match_with_complex_handler(self) -> None:
+    def complex_handler(x: str) -> dict[str, Any]:
+      return {'value': x, 'status': 200}
+
+    result = Ok('hello').match(ok=complex_handler)
+    assert result == {'value': 'hello', 'status': 200}
+
+  def test_ok_match_missing_ok_handler_raises(self) -> None:
+    with pytest.raises(ValueError, match="Ok.match requires an 'ok' handler"):
+      Ok(42).match(err=lambda e: f'Error: {e}')
+
+
+class TestDeprecations:
+  def test_okerr_deprecation_warning(self) -> None:
+    import rustico
+    with pytest.warns(DeprecationWarning, match='OkErr is deprecated'):
+      _ = rustico.OkErr
+
+  def test_okerr_still_accessible(self) -> None:
+    import rustico
+    with pytest.warns(DeprecationWarning, match='OkErr is deprecated'):
+      okerr = rustico.OkErr
+    assert okerr == (Ok, Err)
+
+  def test_match_function_deprecation_warning(self) -> None:
+    from rustico import match
+    with pytest.warns(DeprecationWarning, match='match\\(\\) is deprecated'):
+      match(Ok(1), ok_handler=lambda x: x)
+
+  def test_match_function_still_works(self) -> None:
+    from rustico import match
+    with pytest.warns(DeprecationWarning, match='match\\(\\) is deprecated'):
+      result = match(Ok(42), ok_handler=lambda x: x * 2, err_handler=lambda _: 0)
+    assert result == 84

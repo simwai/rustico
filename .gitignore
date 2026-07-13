@@ -1,14 +1,18 @@
-.venv
+# Build
 dist
-**egg-info**
+.pdm-build
 
 # Cache
 .pytest_cache
 .ruff_cache
 **__pycache__**
+.tox
 
 # Sensitive
 .env
 .pypirc
 
+# Others
+.venv
+**egg-info**
 site/

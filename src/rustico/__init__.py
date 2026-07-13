@@ -1,7 +1,6 @@
 from .rustico import (
   Err,
   Ok,
-  OkErr,
   Result,
   UnwrapError,
   as_async_result,
@@ -18,7 +17,6 @@ from .rustico import (
 __all__ = [
   'Err',
   'Ok',
-  'OkErr',
   'Result',
   'UnwrapError',
   'as_async_result',

@@ -4,6 +4,6 @@
     "charliermarsh.ruff",
     "davidanson.vscode-markdownlint",
     "ms-python.mypy-type-checker",
-    "shellomo.enhanced-toml"
+    "tamasfe.even-better-toml"
   ]
 }

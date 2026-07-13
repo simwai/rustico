@@ -1,15 +1,15 @@
 repos:
-- repo: local
-  hooks:
-  - id: pdm-format
-    name: pdm format
-    entry: pdm format
-    language: python
-    pass_filenames: false
-    types: [ python ]
-  - id: pdm-test
-    name: pdm test
-    entry: pdm test
-    language: python
-    pass_filenames: false
-    types: [ python ]
+  - repo: local
+    hooks:
+      - id: pdm-format
+        name: pdm format
+        entry: pdm format
+        language: python
+        pass_filenames: false
+        types: [python]
+      - id: pdm-test
+        name: pdm test
+        entry: pdm test
+        language: python
+        pass_filenames: false
+        types: [python]

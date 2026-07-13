@@ -16,12 +16,12 @@ except ImportError:
     raise ImportError('rustico requires `typing_extensions` on Python <3.10 for ParamSpec support') from None
 
 try:
-  from typing import TypeIs  # type: ignore
+  from typing import TypeIs  # type: ignore[attr-defined]
 except ImportError:
   try:
-    from typing_extensions import TypeIs  # type: ignore
+    from typing_extensions import TypeIs
   except ImportError:
-    TypeIs = None  # type: ignore
+    TypeIs = None
 
 T = TypeVar('T')
 U = TypeVar('U')
@@ -36,7 +36,7 @@ class Result(Generic[T, E]):
   """Base class for Ok (success) and Err (failure) variants.
 
   Use this for isinstance checks instead of the deprecated OkErr tuple.
-  Provides no methods itself — use Ok/Err methods directly.
+  Use Ok/Err methods directly for type-specific functionality.
 
   ```
   isinstance(Ok(42), Result)  # True
@@ -45,6 +45,26 @@ class Result(Generic[T, E]):
   """
 
   __slots__ = ()
+
+  def is_ok(self) -> bool: raise NotImplementedError
+  def is_err(self) -> bool: raise NotImplementedError
+  def ok(self) -> T | None: raise NotImplementedError
+  def err(self) -> E | None: raise NotImplementedError
+  def unwrap(self) -> T: raise NotImplementedError
+  def unwrap_err(self) -> E: raise NotImplementedError
+  def expect(self, message: str) -> T: raise NotImplementedError
+  def expect_err(self, message: str) -> E: raise NotImplementedError
+  def value_or(self, default: object) -> T: raise NotImplementedError
+  def unwrap_or(self, default: U) -> T: raise NotImplementedError
+  def unwrap_or_else(self, op: Callable[[E], T]) -> T: raise NotImplementedError
+  def map(self, op: Callable[[T], U]) -> Any: raise NotImplementedError
+  def map_err(self, op: Callable[[E], F]) -> Any: raise NotImplementedError
+  def and_then(self, op: Callable[[T], Result[U, E]]) -> Any: raise NotImplementedError
+  def or_else(self, op: Callable[[E], Result[T, F]]) -> Any: raise NotImplementedError
+  def inspect(self, op: Callable[[T], Any]) -> Result[T, E]: raise NotImplementedError
+  def inspect_err(self, op: Callable[[E], Any]) -> Result[T, E]: raise NotImplementedError
+  def match(self, *, ok: Callable[[T], U] | None = None, err: Callable[[E], U] | None = None) -> Any: raise NotImplementedError
+  def alt(self, op: Callable[[E], F]) -> Any: raise NotImplementedError
 
 
 class UnwrapError(Exception, Generic[T, E]):
@@ -291,7 +311,7 @@ class Ok(Result[T, Any]):
     """
     return self._value
 
-  def unwrap_or_raise(self, e: E) -> T:
+  def unwrap_or_raise(self, exception_type: type[BaseException]) -> T:
     """
     Returns the contained value, ignoring the exception since Ok cannot fail.
 
@@ -620,7 +640,7 @@ class Err(Result[Any, E]):
         pass
     ```
     """
-    exc: UnwrapError = UnwrapError(self, f'{message}: {self._value!r}')
+    exc: UnwrapError = UnwrapError(self, f'{message}: {self._value!r}')  # type: ignore[type-arg]
     if isinstance(self._value, BaseException):
       raise exc from self._value
     raise exc
@@ -663,7 +683,7 @@ class Err(Result[Any, E]):
         pass
     ```
     """
-    exc: UnwrapError = UnwrapError(self, f'Called `Result.unwrap()` on an `Err` value: {self._value!r}')
+    exc: UnwrapError = UnwrapError(self, f'Called `Result.unwrap()` on an `Err` value: {self._value!r}')  # type: ignore[type-arg]
     if isinstance(self._value, BaseException):
       raise exc from self._value
     raise exc
@@ -707,7 +727,7 @@ class Err(Result[Any, E]):
     """
     return op(self._value)
 
-  def unwrap_or_raise(self, e: E) -> NoReturn:
+  def unwrap_or_raise(self, exception_type: type[BaseException]) -> NoReturn:
     """
     Raises the provided exception type with the error value as the message.
 
@@ -721,7 +741,7 @@ class Err(Result[Any, E]):
         pass
     ```
     """
-    raise e(self._value)
+    raise exception_type(self._value)
 
   def map(self, op: Callable[[T], U]) -> Err[E]:
     """
@@ -814,7 +834,7 @@ class Err(Result[Any, E]):
     """
     return self
 
-  def or_else(self, op: Callable[[E], Result[T, E]]) -> Result[T, E]:
+  def or_else(self, op: Callable[[E], Result[T, F]]) -> Result[T, F]:
     """
     Applies error recovery operation to the contained error value (monadic bind for errors).
 
@@ -902,7 +922,7 @@ def as_result(
       try:
         return Ok(f(*args, **kwargs))
       except exceptions as exc:
-        return Err(cast('BE', exc))
+        return Err(exc)
 
     return wrapper
 
@@ -1088,13 +1108,13 @@ def do_async(
       async_gen = fn(*args, **kwargs)
       if not inspect.isasyncgen(async_gen):
         if inspect.iscoroutine(async_gen):
-          async_gen.close()  # type: ignore
+          async_gen.close()
         msg = (
           'do_async() decorated function must return an AsyncGenerator (use `yield` inside). '
           f'Got {type(async_gen).__name__!r} instead.'
         )
         raise TypeError(msg)
-      return await _run_do_async(async_gen)  # type: ignore
+      return await _run_do_async(async_gen)
 
     return wrapper
 
@@ -1179,7 +1199,7 @@ def _run_do(gen: Generator[Result[T, E], T | None, T]) -> Result[T, E]:
     if e.args:
       return Ok(e.args[0])
     if last_ok_result is not None:
-      return cast('Result[T, E]', last_ok_result)
+      return last_ok_result
     return Ok(cast('T', None))
 
 
@@ -1197,5 +1217,5 @@ async def _run_do_async(gen: AsyncGenerator[Result[T, E], T | None]) -> Result[T
     if e.args:
       return Ok(e.args[0])
     if last_ok_result is not None:
-      return cast('Result[T, E]', last_ok_result)
+      return last_ok_result
     return Ok(cast('T', None))

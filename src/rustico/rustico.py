@@ -46,25 +46,62 @@ class Result(Generic[T, E]):
 
   __slots__ = ()
 
-  def is_ok(self) -> bool: raise NotImplementedError
-  def is_err(self) -> bool: raise NotImplementedError
-  def ok(self) -> T | None: raise NotImplementedError
-  def err(self) -> E | None: raise NotImplementedError
-  def unwrap(self) -> T: raise NotImplementedError
-  def unwrap_err(self) -> E: raise NotImplementedError
-  def expect(self, message: str) -> T: raise NotImplementedError
-  def expect_err(self, message: str) -> E: raise NotImplementedError
-  def value_or(self, default: object) -> T: raise NotImplementedError
-  def unwrap_or(self, default: U) -> T: raise NotImplementedError
-  def unwrap_or_else(self, op: Callable[[E], T]) -> T: raise NotImplementedError
-  def map(self, op: Callable[[T], U]) -> Any: raise NotImplementedError
-  def map_err(self, op: Callable[[E], F]) -> Any: raise NotImplementedError
-  def and_then(self, op: Callable[[T], Result[U, E]]) -> Any: raise NotImplementedError
-  def or_else(self, op: Callable[[E], Result[T, F]]) -> Any: raise NotImplementedError
-  def inspect(self, op: Callable[[T], Any]) -> Result[T, E]: raise NotImplementedError
-  def inspect_err(self, op: Callable[[E], Any]) -> Result[T, E]: raise NotImplementedError
-  def match(self, *, ok: Callable[[T], U] | None = None, err: Callable[[E], U] | None = None) -> Any: raise NotImplementedError
-  def alt(self, op: Callable[[E], F]) -> Any: raise NotImplementedError
+  def is_ok(self) -> bool:
+    raise NotImplementedError
+
+  def is_err(self) -> bool:
+    raise NotImplementedError
+
+  def ok(self) -> T | None:
+    raise NotImplementedError
+
+  def err(self) -> E | None:
+    raise NotImplementedError
+
+  def unwrap(self) -> T:
+    raise NotImplementedError
+
+  def unwrap_err(self) -> E:
+    raise NotImplementedError
+
+  def expect(self, message: str) -> T:
+    raise NotImplementedError
+
+  def expect_err(self, message: str) -> E:
+    raise NotImplementedError
+
+  def value_or(self, default: object) -> T:
+    raise NotImplementedError
+
+  def unwrap_or(self, default: U) -> T:
+    raise NotImplementedError
+
+  def unwrap_or_else(self, op: Callable[[E], T]) -> T:
+    raise NotImplementedError
+
+  def map(self, op: Callable[[T], U]) -> Any:
+    raise NotImplementedError
+
+  def map_err(self, op: Callable[[E], F]) -> Any:
+    raise NotImplementedError
+
+  def and_then(self, op: Callable[[T], Result[U, E]]) -> Any:
+    raise NotImplementedError
+
+  def or_else(self, op: Callable[[E], Result[T, F]]) -> Any:
+    raise NotImplementedError
+
+  def inspect(self, op: Callable[[T], Any]) -> Result[T, E]:
+    raise NotImplementedError
+
+  def inspect_err(self, op: Callable[[E], Any]) -> Result[T, E]:
+    raise NotImplementedError
+
+  def match(self, *, ok: Callable[[T], U] | None = None, err: Callable[[E], U] | None = None) -> Any:
+    raise NotImplementedError
+
+  def alt(self, op: Callable[[E], F]) -> Any:
+    raise NotImplementedError
 
 
 class UnwrapError(Exception, Generic[T, E]):

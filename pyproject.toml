@@ -47,17 +47,17 @@ Tracker = "https://github.com/simwai/rustico/issues"
 
 [dependency-groups]
 dev = [
-  "ruff>=0.12.1",
-  "pytest>=8.3.5",
-  "pytest-asyncio>=0.23.0,<0.24.0",
-  "pytest-cov>=4.0.0,<5.0.0",
-  "coverage>=7.5.0,<7.6.0",
-  "pre-commit>=3.5.0",
-  "twine>=6.1.0",
-  "mkdocs>=1.6.1",
-  "mkdocs-material>=9.6.15",
-  "lazydocs>=0.4.8",
-  "mkdocs-awesome-pages-plugin>=2.9.2,<2.10.0",
+    "ruff>=0.12.1",
+    "pytest>=8.3.5",
+    "pytest-asyncio>=0.23.0,<0.24.0",
+    "pytest-cov>=4.0.0,<5.0.0",
+    "coverage>=7.5.0,<7.6.0",
+    "pre-commit>=3.5.0",
+    "twine>=6.1.0",
+    "mkdocs>=1.6.1",
+    "mkdocs-material>=9.6.15",
+    "lazydocs>=0.4.8",
+    "mkdocs-awesome-pages-plugin>=2.9.2,<2.10.0",
 ]
 
 [tool.ruff]

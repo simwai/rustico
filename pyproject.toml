@@ -238,8 +238,8 @@ bump-major = "pdm bump major"
 lazydocs-build = "lazydocs --src-base-url=https://github.com/simwai/rustico/tree/main/ --output-path=./docs src/rustico/ --"
 mkdocs-build = "mkdocs build"
 mkdocs-serve = "mkdocs serve"
-upload-testpypi = "twine upload -r testpypi dist/* --skip-existing --config ./.pypirc"
-upload-pypi = "twine upload -r pypi dist/* --skip-existing --config ./.pypirc"
+upload-testpypi = "twine upload -r testpypi dist/* --skip-existing --config ~/.pypirc"
+upload-pypi = "twine upload -r pypi dist/* --skip-existing --config ~/.pypirc"
 install-pre-commit = "pre-commit install"
 
 [tool.pdm.scripts.docs]

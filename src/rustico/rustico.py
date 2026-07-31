@@ -11,17 +11,14 @@ try:
   from typing import ParamSpec
 except ImportError:
   try:
-    from typing_extensions import ParamSpec  # type: ignore
+    from typing_extensions import ParamSpec
   except ImportError:
     raise ImportError('rustico requires `typing_extensions` on Python <3.10 for ParamSpec support') from None
 
-try:
-  from typing import TypeIs  # type: ignore[attr-defined]
-except ImportError:
-  try:
-    from typing_extensions import TypeIs
-  except ImportError:
-    TypeIs = None
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+  from typing_extensions import TypeIs
 
 T = TypeVar('T')
 U = TypeVar('U')
@@ -30,6 +27,8 @@ E = TypeVar('E')
 R = TypeVar('R')
 P = ParamSpec('P')  # Captures the parameter types of the decorated function.
 BE = TypeVar('BE', bound=BaseException)
+
+_PENDING_TRACE: object = object()
 
 
 class Result(Generic[T, E]):
@@ -70,25 +69,25 @@ class Result(Generic[T, E]):
   def expect_err(self, message: str) -> E:
     raise NotImplementedError
 
-  def value_or(self, default: object) -> T:
+  def value_or(self, default: T) -> T:
     raise NotImplementedError
 
-  def unwrap_or(self, default: U) -> T:
+  def unwrap_or(self, default: T) -> T:
     raise NotImplementedError
 
   def unwrap_or_else(self, op: Callable[[E], T]) -> T:
     raise NotImplementedError
 
-  def map(self, op: Callable[[T], U]) -> Any:
+  def map(self, op: Callable[[T], U]) -> Result[U, E]:
     raise NotImplementedError
 
-  def map_err(self, op: Callable[[E], F]) -> Any:
+  def map_err(self, op: Callable[[E], F]) -> Result[T, F]:
     raise NotImplementedError
 
-  def and_then(self, op: Callable[[T], Result[U, E]]) -> Any:
+  def and_then(self, op: Callable[[T], Result[U, E]]) -> Result[U, E]:
     raise NotImplementedError
 
-  def or_else(self, op: Callable[[E], Result[T, F]]) -> Any:
+  def or_else(self, op: Callable[[E], Result[T, F]]) -> Result[T, F]:
     raise NotImplementedError
 
   def inspect(self, op: Callable[[T], Any]) -> Result[T, E]:
@@ -97,10 +96,25 @@ class Result(Generic[T, E]):
   def inspect_err(self, op: Callable[[E], Any]) -> Result[T, E]:
     raise NotImplementedError
 
-  def match(self, *, ok: Callable[[T], U] | None = None, err: Callable[[E], U] | None = None) -> Any:
+  def match(self, *, ok: Callable[[T], U] | None = None, err: Callable[[E], U] | None = None) -> U:
     raise NotImplementedError
 
-  def alt(self, op: Callable[[E], F]) -> Any:
+  def alt(self, op: Callable[[E], F]) -> Result[T, F]:
+    raise NotImplementedError
+
+  def map_or(self, default: U, op: Callable[[T], U]) -> U:
+    raise NotImplementedError
+
+  def map_or_else(self, default_op: Callable[[], U], op: Callable[[T], U]) -> U:
+    raise NotImplementedError
+
+  def unwrap_or_raise(self, exception_type: type[BaseException]) -> T:
+    raise NotImplementedError
+
+  async def map_async(self, op: Callable[[T], Awaitable[U]]) -> Result[U, E]:
+    raise NotImplementedError
+
+  async def and_then_async(self, op: Callable[[T], Awaitable[Result[U, E]]]) -> Result[U, E]:
     raise NotImplementedError
 
 
@@ -142,7 +156,11 @@ class UnwrapError(Exception, Generic[T, E]):
     return self._result
 
 
-class Ok(Result[T, Any]):
+def _unwrap_error(result: Result[T, E], message: str) -> UnwrapError[T, E]:
+  return UnwrapError(result, message)
+
+
+class Ok(Result[T, E]):
   """
   Represents a successful result containing a value.
 
@@ -164,7 +182,7 @@ class Ok(Result[T, Any]):
     return f'Ok({self._value!r})'
 
   def __eq__(self, other: Any) -> bool:
-    return isinstance(other, Ok) and self._value == other._value
+    return isinstance(other, Ok) and self._value == other._value  # type: ignore[operator]
 
   def __ne__(self, other: Any) -> bool:
     return not (self == other)
@@ -173,344 +191,86 @@ class Ok(Result[T, Any]):
     return hash((True, self._value))
 
   def is_ok(self) -> Literal[True]:
-    """
-    Always returns True for Ok instances.
-
-    Use for type narrowing and conditional logic. Prefer this over isinstance checks
-    for better type inference. Avoid when you already know the Result type.
-
-    ```
-    Ok(1).is_ok()  # True
-    ```
-    """
     return True
 
   def is_err(self) -> Literal[False]:
-    """
-    Always returns False for Ok instances.
-
-    Use for type narrowing and conditional logic. Prefer this over isinstance checks
-    for better type inference. Avoid when you already know the Result type.
-
-    ```
-    Ok(1).is_err()  # False
-    ```
-    """
     return False
 
   def ok(self) -> T:
-    """
-    Returns the contained value for Ok instances.
-
-    Use when you want to extract the value without unwrapping. Prefer unwrap()
-    when you're certain the Result is Ok. Avoid when you need error handling.
-
-    ```
-    Ok(1).ok()  # 1
-    ```
-    """
     return self._value
 
   def err(self) -> None:
-    """
-    Always returns None for Ok instances since there's no error.
-
-    Use for symmetry with Err.err() in generic code. Avoid when you know
-    the Result is Ok - the return will always be None.
-
-    ```
-    Ok(1).err()  # None
-    ```
-    """
     return None
 
   @property
   def ok_value(self) -> T:
-    """
-    Returns the inner value for pattern matching and direct access.
-
-    Use with match statements and when you need direct property access.
-    Prefer unwrap() for general value extraction. Avoid when error handling is needed.
-
-    ```
-    Ok(2).ok_value  # 2
-    ```
-    """
     return self._value
 
-  def value_or(self, default: object) -> T:
-    """
-    Returns the contained value, ignoring the default (alias for unwrap_or).
-
-    Use when you want consistent API with Err.value_or(). Prefer unwrap()
-    when you know the Result is Ok. Avoid when the default value is expensive to compute.
-
-    ```
-    Ok(42).value_or(0)  # 42
-    ```
-    """
+  def value_or(self, default: T) -> T:
     return self._value
 
-  def alt(self, op: Callable[[E], F]) -> Ok[T]:
-    """
-    No-op for Ok instances - error transformation doesn't apply to successful results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Ok instances, maintaining the original value. Avoid when you know the Result is Ok.
-
-    ```
-    Ok(1).alt(lambda e: 0)  # Ok(1)
-    ```
-    """
+  def alt(self, op: Callable[[E], F]) -> Ok[T, E]:
     return self
 
-  def expect(self, _message: str) -> T:
-    """
-    Returns the contained value, ignoring the message since Ok cannot fail.
-
-    Use when you want consistent API with Err.expect() in generic code.
-    Prefer unwrap() when you know the Result is Ok. Avoid when error context isn't needed.
-
-    ```
-    Ok(1).expect("should not fail")  # 1
-    ```
-    """
+  def expect(self, message: str) -> T:
     return self._value
 
   def expect_err(self, message: str) -> NoReturn:
-    """
-    Always raises UnwrapError since Ok instances don't contain errors.
-
-    Use when you expect an error but got success - indicates a logic error.
-    Common in testing scenarios. Avoid in normal business logic.
-
-    ```
-    try:
-        Ok(1).expect_err("should be error")
-    except UnwrapError:
-        pass
-    ```
-    """
-    raise UnwrapError(self, message)
+    raise _unwrap_error(self, message)
 
   def unwrap(self) -> T:
-    """
-    Returns the contained value safely since Ok instances always contain values.
-
-    Use when you're certain the Result is Ok or when you want to fail fast on errors.
-    Prefer this over ok() for value extraction. Avoid when error handling is required.
-
-    ```
-    Ok(1).unwrap()  # 1
-    ```
-    """
     return self._value
 
   def unwrap_err(self) -> NoReturn:
-    """
-    Always raises UnwrapError since Ok instances don't contain errors.
+    raise _unwrap_error(self, 'Called `Result.unwrap_err()` on an `Ok` value')
 
-    Use when you expect an error but got success - indicates a logic error.
-    Common in testing scenarios. Avoid in normal business logic.
-
-    ```
-    try:
-        Ok(1).unwrap_err()
-    except UnwrapError:
-        pass
-    ```
-    """
-    raise UnwrapError(self, 'Called `Result.unwrap_err()` on an `Ok` value')
-
-  def unwrap_or(self, _default: U) -> T:
-    """
-    Returns the contained value, ignoring the default since Ok always has a value.
-
-    Use when you want consistent API with Err.unwrap_or() in generic code.
-    Prefer unwrap() when you know the Result is Ok. Avoid when the default is expensive.
-
-    ```
-    Ok(1).unwrap_or(0)  # 1
-    ```
-    """
+  def unwrap_or(self, default: T) -> T:
     return self._value
 
   def unwrap_or_else(self, op: Callable[[E], T]) -> T:
-    """
-    Returns the contained value, ignoring the operation since Ok always has a value.
-
-    Use when you want consistent API with Err.unwrap_or_else() in generic code.
-    The operation is never called for Ok instances. Avoid when you know the Result is Ok.
-
-    ```
-    Ok(1).unwrap_or_else(lambda e: 0)  # 1
-    ```
-    """
     return self._value
 
   def unwrap_or_raise(self, exception_type: type[BaseException]) -> T:
-    """
-    Returns the contained value, ignoring the exception since Ok cannot fail.
-
-    Use when you want consistent API with Err.unwrap_or_raise() in generic code.
-    The exception is never raised for Ok instances. Avoid when you know the Result is Ok.
-
-    ```
-    Ok(1).unwrap_or_raise(Exception)  # 1
-    ```
-    """
     return self._value
 
-  def map(self, op: Callable[[T], U]) -> Ok[U]:
-    """
-    Transforms the contained value using the provided function, wrapping result in Ok.
-
-    Use for transforming successful values while preserving the Ok context.
-    Essential for functional programming patterns. Avoid when transformation can fail
-    without proper error handling.
-
-    ```
-    Ok(2).map(lambda x: x * 10)  # Ok(20)
-    ```
-    """
+  def map(self, op: Callable[[T], U]) -> Ok[U, E]:
     return Ok(op(self._value))
 
-  async def map_async(self, op: Callable[[T], Awaitable[U]]) -> Ok[U]:
-    """
-    Asynchronously transforms the contained value, wrapping result in Ok.
-
-    Use for async transformations of successful values. Essential for async
-    functional programming patterns. Avoid when the async operation can fail
-    without proper error handling.
-
-    ```
-    await Ok(2).map_async(async_lambda)
-    ```
-    """
+  async def map_async(self, op: Callable[[T], Awaitable[U]]) -> Ok[U, E]:
     return Ok(await op(self._value))
 
   def map_or(self, default: U, op: Callable[[T], U]) -> U:
-    """
-    Transforms the contained value using the operation, ignoring the default.
-
-    Use when you want consistent API with Err.map_or() in generic code.
-    The default is never used for Ok instances. Prefer map() when you know the Result is Ok.
-
-    ```
-    Ok(2).map_or(0, lambda x: x * 2)  # 4
-    ```
-    """
     return op(self._value)
 
   def map_or_else(self, default_op: Callable[[], U], op: Callable[[T], U]) -> U:
-    """
-    Transforms the contained value using the operation, ignoring the default operation.
-
-    Use when you want consistent API with Err.map_or_else() in generic code.
-    The default operation is never called for Ok instances. Prefer map() when you know the Result is Ok.
-
-    ```
-    Ok(2).map_or_else(lambda: 0, lambda x: x * 2)  # 4
-    ```
-    """
     return op(self._value)
 
-  def map_err(self, op: Callable[[E], F]) -> Ok[T]:
-    """
-    No-op for Ok instances - error transformation doesn't apply to successful results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Ok instances, maintaining the original value. Avoid when you know the Result is Ok.
-
-    ```
-    Ok(2).map_err(lambda e: 0)  # Ok(2)
-    ```
-    """
+  def map_err(self, op: Callable[[E], F]) -> Ok[T, E]:
     return self
 
   def and_then(self, op: Callable[[T], Result[U, E]]) -> Result[U, E]:
-    """
-    Chains another Result-returning operation on the contained value (monadic bind).
-
-    Use for chaining operations that can fail, creating pipelines of fallible computations.
-    Essential for functional error handling. Avoid when the operation cannot fail.
-
-    ```
-    Ok(2).and_then(lambda x: Ok(x * 2))  # Ok(4)
-    ```
-    """
     return op(self._value)
 
   async def and_then_async(self, op: Callable[[T], Awaitable[Result[U, E]]]) -> Result[U, E]:
-    """
-    Asynchronously chains another Result-returning operation on the contained value.
-
-    Use for chaining async operations that can fail. Essential for async functional
-    error handling patterns. Avoid when the async operation cannot fail.
-
-    ```
-    await Ok(2).and_then_async(async_lambda)
-    ```
-    """
     return await op(self._value)
 
-  def or_else(self, op: Callable[[E], Result[T, F]]) -> Ok[T]:
-    """
-    No-op for Ok instances - error recovery doesn't apply to successful results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Ok instances, maintaining the original value. Avoid when you know the Result is Ok.
-
-    ```
-    Ok(2).or_else(lambda e: Ok(0))  # Ok(2)
-    ```
-    """
+  def or_else(self, op: Callable[[E], Result[T, F]]) -> Ok[T, E]:
     return self
 
-  def inspect(self, op: Callable[[T], Any]) -> Result[T, E]:
-    """
-    Calls the provided function with the contained value for side effects, returns self.
-
-    Use for debugging, logging, or other side effects without changing the Result.
-    Common for tracing successful values in pipelines. Avoid when side effects are expensive.
-
-    ```
-    Ok(2).inspect(print)  # prints 2, returns Ok(2)
-    ```
-    """
+  def inspect(self, op: Callable[[T], Any]) -> Ok[T, E]:
     op(self._value)
     return self
 
-  def inspect_err(self, op: Callable[[E], Any]) -> Result[T, E]:
-    """
-    No-op for Ok instances - error inspection doesn't apply to successful results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Ok instances. Avoid when you know the Result is Ok.
-
-    ```
-    Ok(2).inspect_err(print)  # Ok(2), nothing printed
-    ```
-    """
+  def inspect_err(self, op: Callable[[E], Any]) -> Ok[T, E]:
     return self
 
   def match(self, *, ok: Callable[[T], U] | None = None, err: Callable[[E], U] | None = None) -> U:
-    """
-    Pattern matches on Ok, requiring an 'ok' handler and ignoring 'err' handler.
-
-    Use for exhaustive pattern matching with clear intent. Provides type safety
-    and forces explicit handling. Avoid when simple unwrap() or map() suffices.
-
-    ```
-    Ok(1).match(ok=lambda x: f"Got {x}", err=lambda e: f"Error: {e}")  # 'Got 1'
-    ```
-    """
     if ok is None:
       raise ValueError("Ok.match requires an 'ok' handler")
     return ok(self._value)
 
 
-class Err(Result[Any, E]):
+class Err(Result[T, E]):
   """
   Represents a failed result containing an error value.
 
@@ -527,8 +287,7 @@ class Err(Result[Any, E]):
 
   def __init__(self, value: E) -> None:
     self._value = value
-    # Use a sentinel for lazy traceback computation to avoid side effects in constructor
-    self._trace: list[str] | None | type(...) = ... if isinstance(value, BaseException) else None  # type: ignore
+    self._trace: list[str] | None | object = _PENDING_TRACE if isinstance(value, BaseException) else None
 
   def _capture_traceback(self, exc: E) -> list[str] | None:
     if isinstance(exc, BaseException) and exc.__traceback__ is not None:
@@ -538,31 +297,15 @@ class Err(Result[Any, E]):
 
   @property
   def trace(self) -> list[str] | None:
-    """
-    Returns the captured stack trace as a list of formatted strings for BaseException errors.
-
-    Use for debugging and error reporting when the error value is an exception.
-    Computed lazily to avoid performance overhead. Returns None for non-exception errors.
-    Avoid when error value is not an exception.
-
-
-    try:
-        raise ValueError("fail")
-    except ValueError as e:
-        err = Err(e)
-        print(err.trace)
-
-    """
-    # Lazy computation of traceback to avoid constructor side effects
-    if isinstance(self._value, BaseException) and self._trace is ...:
-      self._trace = self._capture_traceback(self._value)  # type: ignore
-    return self._trace
+    if isinstance(self._value, BaseException) and self._trace is _PENDING_TRACE:
+      self._trace = self._capture_traceback(self._value)
+    return cast('list[str] | None', self._trace)
 
   def __repr__(self) -> str:
     return f'Err({self._value!r})'
 
   def __eq__(self, other: Any) -> bool:
-    return isinstance(other, Err) and self._value == other._value
+    return isinstance(other, Err) and self._value == other._value  # type: ignore[operator]
 
   def __ne__(self, other: Any) -> bool:
     return not (self == other)
@@ -571,364 +314,93 @@ class Err(Result[Any, E]):
     return hash((False, self._value))
 
   def is_ok(self) -> Literal[False]:
-    """
-    Always returns False for Err instances.
-
-    Use for type narrowing and conditional logic. Prefer this over isinstance checks
-    for better type inference. Avoid when you already know the Result type.
-
-    ```
-    Err("fail").is_ok()  # False
-    ```
-    """
     return False
 
   def is_err(self) -> Literal[True]:
-    """
-    Always returns True for Err instances.
-
-    Use for type narrowing and conditional logic. Prefer this over isinstance checks
-    for better type inference. Avoid when you already know the Result type.
-
-    ```
-    Err("fail").is_err()  # True
-    ```
-    """
     return True
 
   def ok(self) -> None:
-    """
-    Always returns None for Err instances since there's no success value.
-
-    Use for symmetry with Ok.ok() in generic code. Avoid when you know
-    the Result is Err - the return will always be None.
-
-    ```
-    Err("fail").ok()  # None
-    ```
-    """
     return None
 
   def err(self) -> E:
-    """
-    Returns the contained error value for Err instances.
-
-    Use when you want to extract the error without unwrapping. Prefer unwrap_err()
-    when you're certain the Result is Err. Avoid when you need success handling.
-
-    ```
-    Err("fail").err()  # "fail"
-    ```
-    """
     return self._value
 
   @property
   def err_value(self) -> E:
-    """
-    Returns the inner error value for pattern matching and direct access.
-
-    Use with match statements and when you need direct property access.
-    Prefer unwrap_err() for general error extraction. Avoid when success handling is needed.
-
-    ```
-    Err("fail").err_value  # "fail"
-    ```
-    """
     return self._value
 
-  def value_or(self, default: U) -> U:
-    """
-    Returns the default value since Err instances don't contain success values.
-
-    Use when you want to provide a fallback value for failed operations.
-    Essential for graceful degradation patterns. Avoid when the default is expensive to compute.
-
-    ```
-    Err("fail").value_or(0)  # 0
-    ```
-    """
+  def value_or(self, default: T) -> T:
     return default
 
-  def alt(self, op: Callable[[E], F]) -> Err[F]:
-    """
-    Transforms the contained error value using the provided function, wrapping result in Err.
-
-    Use for transforming error values while preserving the Err context.
-    Common for error normalization and enrichment. Avoid when error transformation can fail
-    without proper handling.
-
-    ```
-    Err(1).alt(lambda e: e + 1)  # Err(2)
-    ```
-    """
+  def alt(self, op: Callable[[E], F]) -> Result[T, F]:
     return Err(op(self._value))
 
   def expect(self, message: str) -> NoReturn:
-    """
-    Always raises UnwrapError with the provided message since Err instances represent failure.
-
-    Use when you expect success but got failure - provides clear error context.
-    Common for assertions and fail-fast scenarios. Avoid in normal error handling.
-
-    ```
-    try:
-        Err("fail").expect("should not fail")
-    except UnwrapError:
-        pass
-    ```
-    """
-    exc: UnwrapError = UnwrapError(self, f'{message}: {self._value!r}')  # type: ignore[type-arg]
+    exc = _unwrap_error(self, f'{message}: {self._value!r}')
     if isinstance(self._value, BaseException):
       raise exc from self._value
     raise exc
 
-  def expect_err(self, _message: str) -> E:
-    """
-    Returns the contained error value, ignoring the message since Err always contains errors.
-
-    Use when you want consistent API with Ok.expect_err() in generic code.
-    Prefer unwrap_err() when you know the Result is Err. Avoid when success context isn't needed.
-
-    ```
-    Err("fail").expect_err("should be error")  # "fail"
-    ```
-    """
+  def expect_err(self, message: str) -> E:
     return self._value
 
   def unwrap(self) -> NoReturn:
-    """
-    Always raises UnwrapError since Err instances don't contain success values.
-
-    Use when you expect success but got failure - indicates a logic error.
-    Common for fail-fast scenarios and debugging. Avoid in normal error handling.
-
-    ---
-
-    The `unwrap()` method is powerful but should be used with caution. It's designed for situations where you are **certain** the `Result` holds a successful value (`Ok`).
-
-    *   If you call `result.unwrap()` on an `Ok` instance, it safely returns the contained value.
-    *   However, if you call `result.unwrap()` on an `Err` instance, it will **raise an `UnwrapError` exception**. This is a "fail-fast" mechanism, indicating an unexpected error or a logical flaw in your code.
-
-    For robust error handling where you expect and want to gracefully manage potential errors, prefer using methods like `is_ok()`, `is_err()`, `unwrap_or()`, `unwrap_or_else()`, `and_then()`, or Python's `match` statement to process the `Result` without risking an exception.
-
-    ---
-
-    ```
-    try:
-        Err("fail").unwrap()
-    except UnwrapError:
-        pass
-    ```
-    """
-    exc: UnwrapError = UnwrapError(self, f'Called `Result.unwrap()` on an `Err` value: {self._value!r}')  # type: ignore[type-arg]
+    exc = _unwrap_error(self, f'Called `Result.unwrap()` on an `Err` value: {self._value!r}')
     if isinstance(self._value, BaseException):
       raise exc from self._value
     raise exc
 
   def unwrap_err(self) -> E:
-    """
-    Returns the contained error value safely since Err instances always contain errors.
-
-    Use when you're certain the Result is Err or when you want to fail fast on success.
-    Prefer this over err() for error extraction. Avoid when success handling is required.
-
-    ```
-    Err("fail").unwrap_err()  # "fail"
-    ```
-    """
     return self._value
 
-  def unwrap_or(self, default: U) -> U:
-    """
-    Returns the default value since Err instances don't contain success values.
-
-    Use when you want to provide a fallback value for failed operations.
-    Essential for graceful degradation patterns. Avoid when the default is expensive to compute.
-
-    ```
-    Err("fail").unwrap_or(0)  # 0
-    ```
-    """
+  def unwrap_or(self, default: T) -> T:
     return default
 
   def unwrap_or_else(self, op: Callable[[E], T]) -> T:
-    """
-    Applies the operation to the error value and returns the result.
-
-    Use when you want to compute a fallback value based on the error.
-    Essential for error recovery patterns. Avoid when the operation is expensive or can fail.
-
-    ```
-    Err(2).unwrap_or_else(lambda e: e + 1)  # 3
-    ```
-    """
     return op(self._value)
 
   def unwrap_or_raise(self, exception_type: type[BaseException]) -> NoReturn:
-    """
-    Raises the provided exception type with the error value as the message.
-
-    Use when you want to convert Result errors to traditional exceptions.
-    Common at API boundaries. Avoid when you want to maintain Result-based error handling.
-
-    ```
-    try:
-        Err("fail").unwrap_or_raise(ValueError)
-    except ValueError:
-        pass
-    ```
-    """
     raise exception_type(self._value)
 
-  def map(self, op: Callable[[T], U]) -> Err[E]:
-    """
-    No-op for Err instances - value transformation doesn't apply to failed results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Err instances, maintaining the original error. Avoid when you know the Result is Err.
-
-    ```
-    Err("fail").map(lambda x: x * 2)  # Err('fail')
-    ```
-    """
+  def map(self, op: Callable[[T], U]) -> Err[T, E]:
     return self
 
-  async def map_async(self, op: Callable[[T], Awaitable[U]]) -> Err[E]:
-    """
-    No-op for Err instances - async value transformation doesn't apply to failed results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Err instances, maintaining the original error. Avoid when you know the Result is Err.
-
-    ```
-    await Err("fail").map_async(lambda x: x * 2)  # Err('fail')
-    ```
-    """
+  async def map_async(self, op: Callable[[T], Awaitable[U]]) -> Err[T, E]:
     return self
 
   def map_or(self, default: U, op: Callable[[T], U]) -> U:
-    """
-    Returns the default value since Err instances don't contain success values to transform.
-
-    Use when you want to provide a fallback value instead of transforming.
-    The operation is ignored for Err instances. Avoid when the default is expensive.
-
-    ```
-    Err("fail").map_or(0, lambda x: x * 2)  # 0
-    ```
-    """
     return default
 
-  def map_or_else(self, default_op: Callable[[], U], op: Callable[[E], U]) -> U:
-    """
-    Calls the default operation since Err instances don't contain success values to transform.
-
-    Use when you want to compute a fallback value for failed results.
-    The main operation is ignored for Err instances. Avoid when the default operation is expensive.
-
-    ```
-    Err("fail").map_or_else(lambda: 42, lambda x: x * 2)  # 42
-    ```
-    """
+  def map_or_else(self, default_op: Callable[[], U], op: Callable[[T], U]) -> U:
     return default_op()
 
-  def map_err(self, op: Callable[[E], F]) -> Err[F]:
-    """
-    Transforms the contained error value using the provided function, wrapping result in Err.
-
-    Use for transforming error values while preserving the Err context.
-    Common for error normalization and enrichment. Avoid when error transformation can fail.
-
-    ```
-    Err(2).map_err(lambda e: e + 1)  # Err(3)
-    ```
-    """
+  def map_err(self, op: Callable[[E], F]) -> Err[T, F]:
     return Err(op(self._value))
 
-  def and_then(self, op: Callable[[T], Result[U, E]]) -> Err[E]:
-    """
-    No-op for Err instances - chaining operations doesn't apply to failed results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Err instances, maintaining the original error. Avoid when you know the Result is Err.
-
-    ```
-    Err("fail").and_then(lambda x: Ok(x * 2))  # Err('fail')
-    ```
-    """
+  def and_then(self, op: Callable[[T], Result[U, E]]) -> Err[T, E]:
     return self
 
-  async def and_then_async(self, op: Callable[[T], Awaitable[Result[U, E]]]) -> Err[E]:
-    """
-    No-op for Err instances - async chaining operations doesn't apply to failed results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Err instances, maintaining the original error. Avoid when you know the Result is Err.
-
-    ```
-    await Err("fail").and_then_async(lambda x: Ok(x * 2))  # Err('fail')
-    ```
-    """
+  async def and_then_async(self, op: Callable[[T], Awaitable[Result[U, E]]]) -> Err[T, E]:
     return self
 
   def or_else(self, op: Callable[[E], Result[T, F]]) -> Result[T, F]:
-    """
-    Applies error recovery operation to the contained error value (monadic bind for errors).
-
-    Use for chaining error recovery operations, creating pipelines of error handling.
-    Essential for functional error recovery patterns. Avoid when the operation cannot fail.
-
-    ```
-    Err(2).or_else(lambda e: Ok(e + 1))  # Ok(3)
-    ```
-    """
     return op(self._value)
 
-  def inspect(self, op: Callable[[T], Any]) -> Result[T, E]:
-    """
-    No-op for Err instances - value inspection doesn't apply to failed results.
-
-    Use in generic code that handles both Ok and Err. The operation is ignored
-    for Err instances. Avoid when you know the Result is Err.
-
-    ```
-    Err("fail").inspect(print)  # Err('fail'), nothing printed
-    ```
-    """
+  def inspect(self, op: Callable[[T], Any]) -> Err[T, E]:
     return self
 
-  def inspect_err(self, op: Callable[[E], Any]) -> Result[T, E]:
-    """
-    Calls the provided function with the contained error value for side effects, returns self.
-
-    Use for debugging, logging, or other side effects without changing the Result.
-    Common for tracing error values in pipelines. Avoid when side effects are expensive.
-
-    ```
-    Err("fail").inspect_err(print)  # prints 'fail', returns Err('fail')
-    ```
-    """
+  def inspect_err(self, op: Callable[[E], Any]) -> Err[T, E]:
     op(self._value)
     return self
 
   def match(self, *, ok: Callable[[T], U] | None = None, err: Callable[[E], U] | None = None) -> U:
-    """
-    Pattern matches on Err, requiring an 'err' handler and ignoring 'ok' handler.
-
-    Use for exhaustive pattern matching with clear intent. Provides type safety
-    and forces explicit handling. Avoid when simple unwrap_err() or map_err() suffices.
-
-    ```
-    Err("fail").match(ok=lambda x: f"Got {x}", err=lambda e: f"Error: {e}")  # 'Error: fail'
-    ```
-    """
     if err is None:
       raise ValueError("Err.match requires an 'err' handler")
     return err(self._value)
 
 
 def _validate_exception_types(exceptions: tuple[type[BE], ...], decorator_name: str) -> None:
-  if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):
+  if not exceptions or not all(isinstance(exc, type) and issubclass(exc, BaseException) for exc in exceptions):  # type: ignore[reportUnnecessaryIsInstance]
     msg = f'{decorator_name}() requires at least one exception type'
     raise TypeError(msg)
 
@@ -998,7 +470,7 @@ def as_async_result(
   return decorator
 
 
-def is_ok(result: Result[T, E]) -> TypeIs[Ok[T]]:
+def is_ok(result: Result[T, E]) -> TypeIs[Ok[T, E]]:
   """
   Type guard that returns True if the result is Ok, providing type narrowing.
 
@@ -1013,7 +485,7 @@ def is_ok(result: Result[T, E]) -> TypeIs[Ok[T]]:
   return result.is_ok()
 
 
-def is_err(result: Result[T, E]) -> TypeIs[Err[E]]:
+def is_err(result: Result[T, E]) -> TypeIs[Err[T, E]]:
   """
   Type guard that returns True if the result is Err, providing type narrowing.
 
@@ -1096,7 +568,7 @@ def do(
   ```
   """
   if isinstance(fn_or_gen, Generator):
-    return _run_do(fn_or_gen)
+    return _run_do(cast('Generator[Result[T, E], T | None, T]', fn_or_gen))
 
   if callable(fn_or_gen):
     fn = fn_or_gen
@@ -1104,7 +576,7 @@ def do(
     @functools.wraps(fn)
     def wrapper(*args: P.args, **kwargs: P.kwargs) -> Result[T, E]:
       gen = fn(*args, **kwargs)
-      if not isinstance(gen, Generator):
+      if not isinstance(gen, Generator):  # type: ignore[reportUnnecessaryIsInstance]
         msg = (
           f'do() decorated function must return a Generator (use `yield` inside). Got {type(gen).__name__!r} instead.'
         )
@@ -1223,9 +695,9 @@ def catch_async(
 
 
 def _run_do(gen: Generator[Result[T, E], T | None, T]) -> Result[T, E]:
+  value: T | None = None
+  last_ok_result: Result[T, E] | None = None
   try:
-    value: T | None = None
-    last_ok_result: Result[T, E] | None = None
     while True:
       res = gen.send(value)
       if isinstance(res, Err):
@@ -1241,9 +713,9 @@ def _run_do(gen: Generator[Result[T, E], T | None, T]) -> Result[T, E]:
 
 
 async def _run_do_async(gen: AsyncGenerator[Result[T, E], T | None]) -> Result[T, E]:
+  value: T | None = None
+  last_ok_result: Result[T, E] | None = None
   try:
-    value: T | None = None
-    last_ok_result: Result[T, E] | None = None
     while True:
       res = await gen.asend(value)
       if isinstance(res, Err):

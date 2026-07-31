@@ -53,6 +53,7 @@ dev = [
     "pytest-cov>=4.0.0,<5.0.0",
     "coverage>=7.5.0,<7.6.0",
     "pre-commit>=3.5.0",
+    "python-semantic-release>=10.6.1",
     "twine>=6.1.0",
     "mkdocs>=1.6.1",
     "mkdocs-material>=9.6.15",
@@ -227,14 +228,26 @@ reportCallIssue = false
 asyncio_mode = "strict"
 asyncio_default_fixture_loop_scope = "function"
 
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+tag_format = "v{version}"
+build_command = "pdm build"
+commit_author = "simwai <16225108+simwai@users.noreply.github.com>"
+commit_message = "chore(release): v{version} [skip ci]"
+
+[tool.semantic_release.changelog]
+mode = "init"
+
+[tool.semantic_release.branches.main]
+match = "main"
+
 [tool.pdm.scripts]
 start = "python -m src.rustico"
 lint = "ruff check src/"
 format = "ruff format src/"
 test = "pytest"
-bump-patch = "pdm bump patch"
-bump-minor = "pdm bump minor"
-bump-major = "pdm bump major"
+psr-print = "semantic-release version --print"
+psr-version-dry = "semantic-release version --no-commit --no-push"
 lazydocs-build = "lazydocs --src-base-url=https://github.com/simwai/rustico/tree/main/ --output-path=./docs src/rustico/ --"
 mkdocs-build = "mkdocs build"
 mkdocs-serve = "mkdocs serve"
@@ -250,6 +263,9 @@ composite = ["pdm build", "pdm upload-testpypi"]
 
 [tool.pdm.scripts.normal-publish]
 composite = ["pdm build", "pdm upload-pypi"]
+
+[tool.pdm.scripts.release]
+composite = ["semantic-release version", "pdm upload-testpypi", "pdm upload-pypi"]
 
 [tool.pdm.build]
 includes = ["src"]

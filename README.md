@@ -34,6 +34,14 @@ You can install `rustico` using pip:
 pip install rustico
 ```
 
+To install a release from the **test distribution** (TestPyPI) instead — e.g. to smoke-test a pre-release — pin the exact version and point pip at the TestPyPI index:
+
+```bash
+pip install rustico==X.Y.Z --index-url https://test.pypi.org/simple/
+```
+
+See [Installation](docs/installation.md) for details on the main and test distributions.
+
 ## Quick Example
 
 Here's a taste of how `rustico` simplifies error handling:

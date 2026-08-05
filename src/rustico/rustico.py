@@ -28,8 +28,6 @@ R = TypeVar('R')
 P = ParamSpec('P')  # Captures the parameter types of the decorated function.
 BE = TypeVar('BE', bound=BaseException)
 
-_PENDING_TRACE: object = object()
-
 
 class Result(Generic[T, E]):
   """Base class for Ok (success) and Err (failure) variants.
@@ -182,7 +180,10 @@ class Ok(Result[T, E]):
     return f'Ok({self._value!r})'
 
   def __eq__(self, other: Any) -> bool:
-    return isinstance(other, Ok) and self._value == other._value  # type: ignore[operator]
+    if not isinstance(other, Ok):
+      return False
+    other_ok = cast('Ok[T, E]', other)
+    return self._value == other_ok._value
 
   def __ne__(self, other: Any) -> bool:
     return not (self == other)
@@ -207,10 +208,10 @@ class Ok(Result[T, E]):
     return self._value
 
   def value_or(self, default: T) -> T:
-    return self._value
+    return self.unwrap_or(default)
 
   def alt(self, op: Callable[[E], F]) -> Ok[T, E]:
-    return self
+    return self.map_err(op)
 
   def expect(self, message: str) -> T:
     return self._value
@@ -283,11 +284,12 @@ class Err(Result[T, E]):
   """
 
   __match_args__ = ('err_value',)
-  __slots__ = ('_trace', '_value')
+  __slots__ = ('_trace', '_trace_pending', '_value')
 
   def __init__(self, value: E) -> None:
     self._value = value
-    self._trace: list[str] | None | object = _PENDING_TRACE if isinstance(value, BaseException) else None
+    self._trace: list[str] | None = None
+    self._trace_pending = isinstance(value, BaseException)
 
   def _capture_traceback(self, exc: E) -> list[str] | None:
     if isinstance(exc, BaseException) and exc.__traceback__ is not None:
@@ -297,15 +299,19 @@ class Err(Result[T, E]):
 
   @property
   def trace(self) -> list[str] | None:
-    if isinstance(self._value, BaseException) and self._trace is _PENDING_TRACE:
+    if self._trace_pending:
       self._trace = self._capture_traceback(self._value)
-    return cast('list[str] | None', self._trace)
+      self._trace_pending = False
+    return self._trace
 
   def __repr__(self) -> str:
     return f'Err({self._value!r})'
 
   def __eq__(self, other: Any) -> bool:
-    return isinstance(other, Err) and self._value == other._value  # type: ignore[operator]
+    if not isinstance(other, Err):
+      return False
+    other_err = cast('Err[T, E]', other)
+    return self._value == other_err._value
 
   def __ne__(self, other: Any) -> bool:
     return not (self == other)
@@ -330,10 +336,10 @@ class Err(Result[T, E]):
     return self._value
 
   def value_or(self, default: T) -> T:
-    return default
+    return self.unwrap_or(default)
 
   def alt(self, op: Callable[[E], F]) -> Result[T, F]:
-    return Err(op(self._value))
+    return self.map_err(op)
 
   def expect(self, message: str) -> NoReturn:
     exc = _unwrap_error(self, f'{message}: {self._value!r}')
@@ -504,7 +510,7 @@ def match(result: Result[T, E], ok_handler: Callable[[T], R], err_handler: Calla
   """
   **Deprecated:** Use `result.match(ok=..., err=...)` instead.
 
-  This function is deprecated and has been removed in v2.0.
+  This function is deprecated but remains available for backward compatibility.
 
     Pattern match on a Result and apply the appropriate handler function.
 
@@ -633,65 +639,25 @@ def do_async(
 def catch(
   *exceptions: type[BE],
 ) -> Callable[[Callable[P, T]], Callable[P, Result[T, BE]]]:
-  """
-  Decorator that catches specified exceptions and returns them as Err Results.
+  """Deprecated alias for :func:`as_result`.
 
-  Use when you want to convert specific exceptions to Results without catching all exceptions.
-  More precise than as_result for targeted exception handling. Avoid when you need to catch all exceptions.
-
-  ```
-  @catch(ValueError)
-  def parse(x: str) -> int:
-      return int(x)
-  ```
+  Use :func:`as_result` instead.
   """
   _validate_exception_types(exceptions, 'catch')
-
-  def decorator(func: Callable[P, T]) -> Callable[P, Result[T, BE]]:
-    @functools.wraps(func)
-    def wrapper(*args: P.args, **kwargs: P.kwargs) -> Result[T, BE]:
-      try:
-        result = func(*args, **kwargs)
-      except exceptions as e:
-        return Err(e)
-      return Ok(result)
-
-    return wrapper
-
-  return decorator
+  warnings.warn('catch() is deprecated, use as_result() instead', DeprecationWarning, stacklevel=2)
+  return as_result(*exceptions)
 
 
 def catch_async(
   *exceptions: type[BE],
 ) -> Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[Result[T, BE]]]]:
-  """
-  Decorator that catches specified exceptions in async functions and returns them as Err Results.
+  """Deprecated alias for :func:`as_async_result`.
 
-  Use when you want to convert specific async exceptions to Results without catching all exceptions.
-  More precise than as_async_result for targeted exception handling. Avoid when you need to catch all exceptions.
-
-  ```
-  @catch_async(ValueError)
-  async def parse_async(x: str) -> int:
-      return int(x)
-  ```
+  Use :func:`as_async_result` instead.
   """
   _validate_exception_types(exceptions, 'catch_async')
-
-  def decorator(
-    func: Callable[P, Awaitable[T]],
-  ) -> Callable[P, Awaitable[Result[T, BE]]]:
-    @functools.wraps(func)
-    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> Result[T, BE]:
-      try:
-        result = await func(*args, **kwargs)
-      except exceptions as e:
-        return Err(e)
-      return Ok(result)
-
-    return wrapper
-
-  return decorator
+  warnings.warn('catch_async() is deprecated, use as_async_result() instead', DeprecationWarning, stacklevel=2)
+  return as_async_result(*exceptions)
 
 
 def _run_do(gen: Generator[Result[T, E], T | None, T]) -> Result[T, E]:

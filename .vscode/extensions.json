@@ -3,7 +3,6 @@
     "ms-python.vscode-pylance",
     "charliermarsh.ruff",
     "davidanson.vscode-markdownlint",
-    "ms-python.mypy-type-checker",
     "tamasfe.even-better-toml"
   ]
 }

@@ -56,6 +56,14 @@ class TestOk:
     assert Ok(10) != Err(10)
     assert Ok(10) != 10
 
+  def test_ok_hash_matches_equal_value(self) -> None:
+    assert hash(Ok(10)) == hash(Ok(10))
+    assert {Ok(10): 'value'}[Ok(10)] == 'value'
+
+  def test_ok_hash_rejects_unhashable_value(self) -> None:
+    with pytest.raises(TypeError):
+      hash(Ok([]))
+
   def test_ok_map(self) -> None:
     """✅ Test: Business Logic - map transforms the inner value."""
     assert Ok(5).map(lambda x: x * 2) == Ok(10)
@@ -156,6 +164,14 @@ class TestErr:
     assert Err('fail') == Err('fail')
     assert Err('fail') != Err('other fail')
     assert Err('fail') != Ok('fail')
+
+  def test_err_hash_matches_equal_value(self) -> None:
+    assert hash(Err('fail')) == hash(Err('fail'))
+    assert {Err('fail'): 'error'}[Err('fail')] == 'error'
+
+  def test_err_hash_rejects_unhashable_value(self) -> None:
+    with pytest.raises(TypeError):
+      hash(Err([]))
 
   def test_err_map_is_noop(self) -> None:
     """✅ Test: Business Logic - map has no effect on Err."""
@@ -322,6 +338,15 @@ class TestDecorators:
 
 # --- Integration Tests for catch Decorators ---
 class TestCatchDecorators:
+  def test_catch_is_deprecated_alias(self) -> None:
+    with pytest.warns(DeprecationWarning, match=r'catch\(\) is deprecated'):
+
+      @catch(MyCustomError)
+      def func() -> int:
+        return 42
+
+    assert func() == Ok(42)
+
   def test_catch_success(self) -> None:
     """✅ Test: Critical Paths - @catch should return Ok on success."""
 
@@ -341,6 +366,16 @@ class TestCatchDecorators:
     result = func()
     assert result.is_err()
     assert isinstance(result.err_value, MyCustomError)
+
+  @pytest.mark.asyncio
+  async def test_catch_async_is_deprecated_alias(self) -> None:
+    with pytest.warns(DeprecationWarning, match=r'catch_async\(\) is deprecated'):
+
+      @catch_async(MyCustomError)
+      async def func() -> int:
+        return 42
+
+    assert await func() == Ok(42)
 
   @pytest.mark.asyncio
   async def test_catch_async_success(self) -> None:
@@ -411,6 +446,13 @@ class TestDoNotation:
 
     assert do(do_logic()) == Err('something went wrong')
 
+  def test_do_empty_generator_returns_ok_none(self) -> None:
+    def do_logic() -> Generator[Result[None, str], None, None]:
+      if False:
+        yield Ok(None)
+
+    assert do(do_logic()) == Ok(None)
+
   # --- Async `do_async` decorator tests ---
   @pytest.mark.asyncio
   async def test_do_async_decorator_success(self) -> None:
@@ -458,6 +500,14 @@ class TestDoNotation:
       yield Ok(x + 1)
 
     assert await do_async(do_logic()) == Err('async error')
+
+  @pytest.mark.asyncio
+  async def test_do_async_empty_generator_returns_ok_none(self) -> None:
+    async def do_logic() -> AsyncGenerator[Result[None, str], None]:
+      if False:
+        yield Ok(None)
+
+    assert await do_async(do_logic()) == Ok(None)
 
   # --- Edge Case Tests ---
   def test_do_raises_on_async_generator(self) -> None:
@@ -513,6 +563,12 @@ class TestErrMatch:
   def test_err_match_with_only_err_handler(self) -> None:
     result = Err('fail').match(err=lambda e: f'Error: {e}')
     assert result == 'Error: fail'
+
+  def test_err_match_without_err_handler_returns_none(self) -> None:
+    from rustico import match
+
+    with pytest.warns(DeprecationWarning):
+      assert match(Err('fail'), ok_handler=lambda _: 'ok') is None
 
   def test_err_match_with_none_value(self) -> None:
     result = Err(None).match(err=lambda _: 'Got None error')

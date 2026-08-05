@@ -13,7 +13,7 @@
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L408"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L414"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `as_result`
 
@@ -39,7 +39,7 @@ parse_int("fail")  # Err(ValueError(...))
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L441"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L447"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `as_async_result`
 
@@ -62,7 +62,7 @@ async def parse_int_async(x: str) -> int:
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L473"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L479"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `is_ok`
 
@@ -82,7 +82,7 @@ is_ok(Err("fail"))  # False
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L488"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L494"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `is_err`
 
@@ -102,7 +102,7 @@ is_err(Err("fail"))  # True
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L503"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L509"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `match`
 
@@ -116,7 +116,7 @@ match(
 
 **Deprecated:** Use `result.match(ok=..., err=...)` instead. 
 
-This function is deprecated and has been removed in v2.0. 
+This function is deprecated but remains available for backward compatibility. 
 
  Pattern match on a Result and apply the appropriate handler function. 
 
@@ -148,7 +148,7 @@ This function is deprecated and has been removed in v2.0.
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L550"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L556"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `do`
 
@@ -175,7 +175,7 @@ my_func()  # Ok(5)
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L591"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L597"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `do_async`
 
@@ -200,7 +200,7 @@ async def my_func() -> AsyncGenerator[...]:
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L633"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L639"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `catch`
 
@@ -210,20 +210,14 @@ catch(
 ) → Callable[[Callable[P, T]], Callable[P, Result[T, BE]]]
 ```
 
-Decorator that catches specified exceptions and returns them as Err Results. 
+Deprecated alias for :func:`as_result`. 
 
-Use when you want to convert specific exceptions to Results without catching all exceptions. More precise than as_result for targeted exception handling. Avoid when you need to catch all exceptions. 
-
-```
-@catch(ValueError)
-def parse(x: str) -> int:
-     return int(x)
-``` 
+Use :func:`as_result` instead. 
 
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L664"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L651"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>function</kbd> `catch_async`
 
@@ -233,20 +227,14 @@ catch_async(
 ) → Callable[[Callable[P, Awaitable[T]]], Callable[P, Awaitable[Result[T, BE]]]]
 ```
 
-Decorator that catches specified exceptions in async functions and returns them as Err Results. 
+Deprecated alias for :func:`as_async_result`. 
 
-Use when you want to convert specific async exceptions to Results without catching all exceptions. More precise than as_async_result for targeted exception handling. Avoid when you need to catch all exceptions. 
-
-```
-@catch_async(ValueError)
-async def parse_async(x: str) -> int:
-     return int(x)
-``` 
+Use :func:`as_async_result` instead. 
 
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L34"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L32"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Result`
 Base class for Ok (success) and Err (failure) variants. 
@@ -263,7 +251,7 @@ isinstance(Err("fail"), Result)  # True
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L102"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L100"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `alt`
 
@@ -277,7 +265,7 @@ alt(op: 'Callable[[E], F]') → Result[T, F]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L87"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L85"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then`
 
@@ -291,7 +279,7 @@ and_then(op: 'Callable[[T], Result[U, E]]') → Result[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L117"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L115"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then_async`
 
@@ -305,7 +293,7 @@ and_then_async(op: 'Callable[[T], Awaitable[Result[U, E]]]') → Result[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L57"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L55"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `err`
 
@@ -319,7 +307,7 @@ err() → E | None
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L66"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L64"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect`
 
@@ -333,7 +321,7 @@ expect(message: 'str') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L69"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L67"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect_err`
 
@@ -347,7 +335,7 @@ expect_err(message: 'str') → E
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L93"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L91"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect`
 
@@ -361,7 +349,7 @@ inspect(op: 'Callable[[T], Any]') → Result[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L96"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L94"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect_err`
 
@@ -375,7 +363,7 @@ inspect_err(op: 'Callable[[E], Any]') → Result[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L51"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L49"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_err`
 
@@ -389,7 +377,7 @@ is_err() → bool
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L48"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L46"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_ok`
 
@@ -403,7 +391,7 @@ is_ok() → bool
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L81"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L79"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -417,7 +405,7 @@ map(op: 'Callable[[T], U]') → Result[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L114"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L112"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_async`
 
@@ -431,7 +419,7 @@ map_async(op: 'Callable[[T], Awaitable[U]]') → Result[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L84"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L82"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_err`
 
@@ -445,7 +433,7 @@ map_err(op: 'Callable[[E], F]') → Result[T, F]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L105"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L103"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or`
 
@@ -459,7 +447,7 @@ map_or(default: 'U', op: 'Callable[[T], U]') → U
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L108"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L106"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or_else`
 
@@ -473,7 +461,7 @@ map_or_else(default_op: 'Callable[[], U]', op: 'Callable[[T], U]') → U
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L99"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L97"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match`
 
@@ -490,7 +478,7 @@ match(
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L54"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L52"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `ok`
 
@@ -504,7 +492,7 @@ ok() → T | None
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L90"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L88"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `or_else`
 
@@ -518,7 +506,7 @@ or_else(op: 'Callable[[E], Result[T, F]]') → Result[T, F]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L60"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L58"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap`
 
@@ -532,7 +520,7 @@ unwrap() → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L63"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L61"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_err`
 
@@ -546,7 +534,7 @@ unwrap_err() → E
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L75"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L73"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or`
 
@@ -560,7 +548,7 @@ unwrap_or(default: 'T') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L78"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L76"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_else`
 
@@ -574,7 +562,7 @@ unwrap_or_else(op: 'Callable[[E], T]') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L111"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L109"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_raise`
 
@@ -588,7 +576,7 @@ unwrap_or_raise(exception_type: 'type[BaseException]') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L72"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L70"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `value_or`
 
@@ -603,7 +591,7 @@ value_or(default: 'T') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L121"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L119"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `UnwrapError`
 Exception raised when an unwrap or expect operation fails on a Result. 
@@ -616,7 +604,7 @@ except UnwrapError as e:
 # Called `Result.unwrap()` on an `Err` value: 'fail'
 ``` 
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L136"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L134"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -649,7 +637,7 @@ except UnwrapError as e:
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L163"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L161"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Ok`
 Represents a successful result containing a value. 
@@ -660,7 +648,7 @@ Use when operations succeed and you want to chain further operations. Avoid when
 Ok(42).unwrap()  # 42
 ``` 
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L178"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L176"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -685,7 +673,7 @@ __init__(value: 'T') → None
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L212"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L213"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `alt`
 
@@ -699,7 +687,7 @@ alt(op: 'Callable[[E], F]') → Ok[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L251"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L252"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then`
 
@@ -713,7 +701,7 @@ and_then(op: 'Callable[[T], Result[U, E]]') → Result[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L254"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L255"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then_async`
 
@@ -727,7 +715,7 @@ and_then_async(op: 'Callable[[T], Awaitable[Result[U, E]]]') → Result[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L202"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L203"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `err`
 
@@ -741,7 +729,7 @@ err() → None
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L215"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L216"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect`
 
@@ -755,7 +743,7 @@ expect(message: 'str') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L218"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L219"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect_err`
 
@@ -769,7 +757,7 @@ expect_err(message: 'str') → NoReturn
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L260"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L261"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect`
 
@@ -783,7 +771,7 @@ inspect(op: 'Callable[[T], Any]') → Ok[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L264"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L265"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect_err`
 
@@ -797,7 +785,7 @@ inspect_err(op: 'Callable[[E], Any]') → Ok[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L196"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L197"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_err`
 
@@ -811,7 +799,7 @@ is_err() → Literal[False]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L193"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L194"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_ok`
 
@@ -825,7 +813,7 @@ is_ok() → Literal[True]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L236"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L237"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -839,7 +827,7 @@ map(op: 'Callable[[T], U]') → Ok[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L239"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L240"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_async`
 
@@ -853,7 +841,7 @@ map_async(op: 'Callable[[T], Awaitable[U]]') → Ok[U, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L248"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L249"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_err`
 
@@ -867,7 +855,7 @@ map_err(op: 'Callable[[E], F]') → Ok[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L242"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L243"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or`
 
@@ -881,7 +869,7 @@ map_or(default: 'U', op: 'Callable[[T], U]') → U
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L245"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L246"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or_else`
 
@@ -895,7 +883,7 @@ map_or_else(default_op: 'Callable[[], U]', op: 'Callable[[T], U]') → U
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L267"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L268"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match`
 
@@ -912,7 +900,7 @@ match(
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L199"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L200"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `ok`
 
@@ -926,7 +914,7 @@ ok() → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L257"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L258"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `or_else`
 
@@ -940,7 +928,7 @@ or_else(op: 'Callable[[E], Result[T, F]]') → Ok[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L221"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L222"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap`
 
@@ -954,7 +942,7 @@ unwrap() → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L224"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L225"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_err`
 
@@ -968,7 +956,7 @@ unwrap_err() → NoReturn
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L227"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L228"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or`
 
@@ -982,7 +970,7 @@ unwrap_or(default: 'T') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L230"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L231"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_else`
 
@@ -996,7 +984,7 @@ unwrap_or_else(op: 'Callable[[E], T]') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L233"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L234"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_raise`
 
@@ -1010,7 +998,7 @@ unwrap_or_raise(exception_type: 'type[BaseException]') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L209"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L210"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `value_or`
 
@@ -1025,7 +1013,7 @@ value_or(default: 'T') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L273"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L274"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ## <kbd>class</kbd> `Err`
 Represents a failed result containing an error value. 
@@ -1036,7 +1024,7 @@ Use when operations fail and you want to propagate error information. Avoid when
 Err("fail").unwrap_or(0)  # 0
 ``` 
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L288"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L289"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `__init__`
 
@@ -1069,7 +1057,7 @@ __init__(value: 'E') → None
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L335"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L341"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `alt`
 
@@ -1083,7 +1071,7 @@ alt(op: 'Callable[[E], F]') → Result[T, F]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L380"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then`
 
@@ -1097,7 +1085,7 @@ and_then(op: 'Callable[[T], Result[U, E]]') → Err[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L383"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L389"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `and_then_async`
 
@@ -1111,7 +1099,7 @@ and_then_async(op: 'Callable[[T], Awaitable[Result[U, E]]]') → Err[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L325"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L331"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `err`
 
@@ -1125,7 +1113,7 @@ err() → E
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L338"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L344"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect`
 
@@ -1139,7 +1127,7 @@ expect(message: 'str') → NoReturn
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L344"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L350"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `expect_err`
 
@@ -1153,7 +1141,7 @@ expect_err(message: 'str') → E
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L389"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L395"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect`
 
@@ -1167,7 +1155,7 @@ inspect(op: 'Callable[[T], Any]') → Err[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L392"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L398"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `inspect_err`
 
@@ -1181,7 +1169,7 @@ inspect_err(op: 'Callable[[E], Any]') → Err[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L319"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L325"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_err`
 
@@ -1195,7 +1183,7 @@ is_err() → Literal[True]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L316"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L322"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `is_ok`
 
@@ -1209,7 +1197,7 @@ is_ok() → Literal[False]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L365"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L371"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map`
 
@@ -1223,7 +1211,7 @@ map(op: 'Callable[[T], U]') → Err[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L368"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L374"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_async`
 
@@ -1237,7 +1225,7 @@ map_async(op: 'Callable[[T], Awaitable[U]]') → Err[T, E]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L377"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L383"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_err`
 
@@ -1251,7 +1239,7 @@ map_err(op: 'Callable[[E], F]') → Err[T, F]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L371"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L377"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or`
 
@@ -1265,7 +1253,7 @@ map_or(default: 'U', op: 'Callable[[T], U]') → U
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L374"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L380"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `map_or_else`
 
@@ -1279,7 +1267,7 @@ map_or_else(default_op: 'Callable[[], U]', op: 'Callable[[T], U]') → U
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L396"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L402"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `match`
 
@@ -1296,7 +1284,7 @@ match(
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L322"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L328"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `ok`
 
@@ -1310,7 +1298,7 @@ ok() → None
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L386"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L392"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `or_else`
 
@@ -1324,7 +1312,7 @@ or_else(op: 'Callable[[E], Result[T, F]]') → Result[T, F]
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L347"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L353"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap`
 
@@ -1338,7 +1326,7 @@ unwrap() → NoReturn
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L353"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L359"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_err`
 
@@ -1352,7 +1340,7 @@ unwrap_err() → E
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L356"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L362"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or`
 
@@ -1366,7 +1354,7 @@ unwrap_or(default: 'T') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L359"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L365"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_else`
 
@@ -1380,7 +1368,7 @@ unwrap_or_else(op: 'Callable[[E], T]') → T
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L362"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L368"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `unwrap_or_raise`
 
@@ -1394,7 +1382,7 @@ unwrap_or_raise(exception_type: 'type[BaseException]') → NoReturn
 
 ---
 
-<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L332"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
+<a href="https://github.com/simwai/rustico/tree/main/src\rustico\rustico.py#L338"><img align="right" style="float:right;" src="https://img.shields.io/badge/-source-cccccc?style=flat-square"></a>
 
 ### <kbd>method</kbd> `value_or`
 

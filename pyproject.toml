@@ -30,7 +30,9 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+    "typing_extensions>=4.10,<4.14",
+]
 
 [project.license]
 text = "MIT"
@@ -47,6 +49,7 @@ Tracker = "https://github.com/simwai/rustico/issues"
 
 [dependency-groups]
 dev = [
+    "pyright==1.1.411",
     "ruff>=0.12.1",
     "pytest>=8.3.5",
     "pytest-asyncio>=0.23.0,<0.24.0",
@@ -170,63 +173,10 @@ docstring-code-line-length = "dynamic"
 [tool.pyright]
 include = ["src/**"]
 pythonVersion = "3.8"
-typeCheckingMode = "off"
-reportMissingImports = "warning"
-reportMissingTypeStubs = false
-reportImportCycles = "warning"
-reportInvalidTypeForm = false
-reportOptionalSubscript = false
-reportOptionalMemberAccess = false
-reportOptionalCall = false
-reportOptionalIterable = false
-reportOptionalContextManager = false
-reportOptionalOperand = false
-reportTypedDictNotRequiredAccess = false
-reportIncompatibleMethodOverride = "warning"
-reportIncompatibleVariableOverride = "warning"
-reportOverlappingOverloads = "warning"
-reportConstantRedefinition = "warning"
-reportUnusedImport = false
-reportUnusedClass = false
-reportUnusedFunction = false
-reportUnusedVariable = false
-reportDuplicateImport = false
-reportPrivateImportUsage = false
-reportUntypedFunctionDecorator = false
-reportUntypedClassDecorator = false
-reportUntypedBaseClass = false
-reportUntypedNamedTuple = false
-reportPrivateUsage = false
-reportTypeCommentUsage = false
-reportInvalidStringEscapeSequence = "error"
-reportUnknownParameterType = false
-reportUnknownArgumentType = false
-reportUnknownLambdaType = false
-reportUnknownVariableType = false
-reportUnknownMemberType = false
-reportMissingParameterType = false
-reportMissingTypeArgument = false
-reportInvalidTypeVarUse = false
-reportCallInDefaultInitializer = false
-reportUnnecessaryIsInstance = false
-reportUnnecessaryCast = false
-reportUnnecessaryComparison = false
-reportUnnecessaryContains = false
-reportAssertAlwaysTrue = "error"
-reportSelfClsParameterName = "error"
-reportImplicitStringConcatenation = false
-reportInvalidStubStatement = false
-reportIncompleteStub = false
-reportUnsupportedDunderAll = false
-reportUnusedCoroutine = "warning"
-reportUnnecessaryTypeIgnoreComment = false
-reportMatchNotExhaustive = false
-reportAttributeAccessIssue = false
-reportCallIssue = false
+typeCheckingMode = "strict"
 
 [tool.pytest.ini_options]
 asyncio_mode = "strict"
-asyncio_default_fixture_loop_scope = "function"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
@@ -245,6 +195,7 @@ match = "main"
 start = "python -m src.rustico"
 lint = "ruff check src/"
 format = "ruff format src/"
+typecheck = "pyright src"
 test = "pytest"
 psr-print = "semantic-release version --print"
 psr-version-dry = "semantic-release version --no-commit --no-push"

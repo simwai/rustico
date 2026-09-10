@@ -298,6 +298,106 @@ Status:
 - Blocked pending evidence
 ```
 
+## `DOCS_PARALLEL` template
+
+```txt
+[PHASE: DOCS_PARALLEL]
+
+# For the human
+[2-4 plain-language sentences: parallel docs lookup launched, multiple dependency types being researched concurrently]
+
+# For the agent
+
+# Parallel Lookup Groups
+Groups: [npm: N deps, pip: M deps, cargo: K deps, go: L deps, maven: P deps, gradle: Q deps]
+Active: [group name] -- [current dep / total] -- [status]
+Completed: [group name] -- [evidence recorded]
+
+# Lookup State (partitioned per group)
+npm:
+  Dependencies: [dep1, dep2, ...]
+  Evidence: [count] provisional
+  Status: [in-progress|complete|failed]
+pip:
+  Dependencies: [dep1, dep2, ...]
+  Evidence: [count] provisional
+  Status: [in-progress|complete|failed]
+cargo:
+  Dependencies: [dep1, dep2, ...]
+  Evidence: [count] provisional
+  Status: [in-progress|complete|failed]
+go:
+  Dependencies: [dep1, dep2, ...]
+  Evidence: [count] provisional
+  Status: [in-progress|complete|failed]
+maven:
+  Dependencies: [dep1, dep2, ...]
+  Evidence: [count] provisional
+  Status: [in-progress|complete|failed]
+gradle:
+  Dependencies: [dep1, dep2, ...]
+  Evidence: [count] provisional
+  Status: [in-progress|complete|failed]
+
+Aggregation: [pending|complete]
+Output: Unified evidence written to main session state on aggregation complete
+```
+
+This phase runs automatically when CHECKLIST detects multiple dependency types. Subagents spawned per dependency type with partitioned evidence collection (max 3 concurrent). The aggregation step produces unified evidence for the consolidated REVIEW phase.
+```
+
+## `PARALLEL_REVIEW` template
+
+```txt
+[PHASE: PARALLEL_REVIEW]
+
+# For the human
+[2-4 plain-language sentences: parallel review launched, N reviewers + tester reviewing concurrently]
+
+# For the agent
+
+# Parallel Progress
+Sensei-1: [phase] -- [current batch/total] -- [status] -- [layer: controllers]
+Sensei-2: [phase] -- [current batch/total] -- [status] -- [layer: services]
+Sensei-N: [phase] -- [current batch/total] -- [status] -- [layer: utils]
+Tester: [phase] -- [current batch/total] -- [status]
+Merge: [pending|complete]
+
+# Sensei State 1 (partitioned)
+Review cursor: [file:batch]
+Findings: [count] provisional
+Open questions: [count]
+Review decision: [pending|complete]
+Layer: controllers
+
+# Sensei State 2 (partitioned)
+Review cursor: [file:batch]
+Findings: [count] provisional
+Open questions: [count]
+Review decision: [pending|complete]
+Layer: services
+
+# Sensei State N (partitioned)
+Review cursor: [file:batch]
+Findings: [count] provisional
+Open questions: [count]
+Review decision: [pending|complete]
+Layer: utils
+
+# Tester State (partitioned)
+Review cursor: [file:batch]
+Findings: [count] provisional
+Test strategy: [draft|complete]
+Binding items: [count]
+Strong hints: [count]
+
+Merge protocol: See 07-protocols.md `## REVIEW Merge Protocol`
+Output: Unified findings written to main session state on merge complete
+```
+
+This phase runs automatically when CHECKLIST inventory > 1 file. Partitions file inventory by architectural layer (controllers/, services/, repositories/, middleware/, components/, hooks/, stores/, utils/, tests/); spawns N BabaSensei reviewers (N = min(ceil(files/50), 4)) + BabaTester. The merge step produces unified findings for the consolidated REVIEW phase.
+```
+
 ## `REVIEW` template
 
 ```txt
@@ -312,6 +412,7 @@ the one decision you must confirm]
 # Multi-file progress
 Reviewed: [X/Y] files -- [Z] batches complete
 Review mode: [interactive|consolidated]
+Parallel progress: [sensei-1: batch N/M, sensei-2: batch N/M, ..., tester: batch N/M | merged: pending|complete]
 
 # Findings
 File: [file path or ALL FILES]
@@ -465,6 +566,7 @@ Forbidden in patch:
 - Lint gate (per edit step): PASS/FAIL/SKIPPED -- [command] -- [results]
 - Checks run: [commands] or none available
 - Results: PASS/FAIL/SKIPPED -- [notes]
+- Parallel groups: [lint+typecheck: sequential], [unit: parallel 3/3], [integration: sequential], [e2e: sequential] -- total 45s (vs 78s sequential)
 - Regression baseline (expected FAIL): PASS|FAIL/SKIPPED -- [command] -- [note or SKIPPED reason]
 - Regression post-fix (expected PASS): PASS|FAIL/SKIPPED -- [command] -- [note or SKIPPED reason]
 - Playwright smoke: PASS/FAIL/SKIPPED -- [URL] -- [note]
@@ -581,7 +683,7 @@ style_policy_resolved: [yes|no]
 ## Startup Verification
 
 AGENTS.md: [cited rule]
-00-system.md: [cited rule]
+00-system.md: [cited rule] — fingerprint: <line_count> lines, first_100_chars="<first 100 chars>", sha256_first_1kb="<hash or N/A>"
 01-personas.md: [cited rule]
 03-output-and-state.md: [cited rule]
 04-rubrics.md: [cited rule]
@@ -590,6 +692,8 @@ AGENTS.md: [cited rule]
 07-protocols.md: [cited rule]
 08-plan-actual-gate.md: [cited rule]
 Status: [Complete|Incomplete]
+
+**Load rule**: The initial load of all 8 system files at session start MUST read each file in full with NO chunking (single read per file, largest window). Chunking is only allowed for non-system files after STARTUP is complete.
 
 ## Phase Artifacts
 
@@ -651,10 +755,37 @@ plan_actual_history: [list of (timestamp, items, verdict) tuples]
 
 - [server]: [ready|unavailable|not_checked]
 
+## Parallel Budget
+
+parallel_budget: {docs: 3, checklist: 4, patch: 4}
+docs_partitions: [npm, pip, cargo, go, maven, gradle] -- [active subset]
+checklist_partitions: [layer1, layer2, ...] -- [active subset]
+patch_isolated_suites: [suite1, suite2, ...] -- [detected isolated test suites]
+
 ## Drift State
 
 prior_phase: [phase or n/a]
 spec_version: [x.y.z or n/a]
+
+## Phase Status
+
+phase_status: {sensei: [phase|n/a], tester: [phase|n/a], merge: [pending|complete|n/a]}
+
+## Sensei State 1
+
+[partitioned session state for BabaSensei reviewer 1 during PARALLEL_REVIEW; contains review_cursor, findings, open_questions, review_decision, layer]
+
+## Sensei State 2
+
+[partitioned session state for BabaSensei reviewer 2 during PARALLEL_REVIEW; contains review_cursor, findings, open_questions, review_decision, layer]
+
+## Sensei State N
+
+[partitioned session state for BabaSensei reviewer N during PARALLEL_REVIEW; contains review_cursor, findings, open_questions, review_decision, layer]
+
+## Tester State
+
+[partitioned session state for BabaTester during PARALLEL_REVIEW; contains review_cursor, findings, test_strategy, binding_items, strong_hints]
 
 ## Discovery Evidence
 
@@ -666,6 +797,8 @@ spec_version: [x.y.z or n/a]
 ```
 
 Compare `target`, `scope`, `session_id`, and `spec_version` with the current request before restoring any phase, approval, or rewrite contract. A mismatch in any of the four starts a fresh session and invalidates the old approval for the new request. A legacy file (no `session_id`) is always a mismatch for approval purposes.
+
+**Fresh-session load mandate**: On every fresh session (new session_id or mismatch detected), all 8 system files MUST be reloaded from disk in full with NO chunking. Prior loads from previous sessions NEVER carry over — each session starts with a clean slate and must complete the STARTUP gate independently.
 
 ## Incomplete handoff response
 

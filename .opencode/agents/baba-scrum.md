@@ -98,3 +98,10 @@ L size OR multiple independent deliverables → MUST split before SPRINT/TASK_PL
 - Task card, size, ICE, milestone, DoD → CHECKLIST
 - SPEC version travels with handoff when spec-authoring in scope
 - Never reviews code or patches
+
+## Protocol Enforcement (Automatic)
+
+The `protocol-enforce` plugin runs at phase transitions. You MUST update session metadata:
+- At phase entry: set `metadata.phase = "INTAKE" | "BACKLOG" | "SPRINT" | "TASK_PLAN" | "SPEC" | etc.`
+- At SPEC: set `metadata.spec_version = "x.y.z"`
+- The plugin will block phase entry if protocol checks fail (discovery, artifact-handling)

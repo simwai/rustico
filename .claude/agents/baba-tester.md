@@ -55,6 +55,13 @@ For each confirmed bug entering PATCH:
 - **STRONG HINT** — Usually honor or adapt with written rationale
 - **WEAK HINT** — Defer explicitly with reason; never silently drop
 
+## Protocol Enforcement (Automatic)
+
+The `protocol-enforce` plugin runs at phase transitions. You MUST update session metadata:
+- At phase entry: set `metadata.phase = "REVIEW" | "TEST_STRATEGY" | etc.`
+- At REVIEW: set `metadata.edited_files = [files under review]`
+- The plugin will block phase entry if protocol checks fail (artifact, pre-commit, locks, api-design)
+
 ## Common Finding Patterns
 
 - Missing null/empty boundary tests (L2)

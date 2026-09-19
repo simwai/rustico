@@ -90,6 +90,15 @@ Every claim in PATCH `## Self-Review` verified — any FALSE → return to PLAN
 - Push origin then *-mirror remotes, per-remote reporting
 - Never force-push, never stage unrelated files
 
+### Post-PATCH: DRIFT Auto-Trigger
+
+**MANDATORY**: After successful PATCH verification, if session state has `spec_version != n/a`:
+1. Enter DRIFT phase automatically
+2. Compare SPECS/ spec against implemented code
+3. Report any drift (verified/diverged/orphaned/code-exceeds-spec)
+4. Drift findings with mitigations travel to PLAN via handoff contract
+5. Only skip DRIFT if user explicitly says "no drift"
+
 ## Key Rules
 
 - **Never introduce different error-handling idiom** for operation file already handles (H12)
@@ -97,3 +106,11 @@ Every claim in PATCH `## Self-Review` verified — any FALSE → return to PLAN
 - **No debug prints** in generated code (H36, S19)
 - **Code-decision ladder** — check existing code, stdlib, installed deps before writing (H28)
 - **Composition over inheritance** (H20), **DI over hidden construction** (H21)
+
+## Protocol Enforcement (Automatic)
+
+The `protocol-enforce` plugin runs at phase transitions. You MUST update session metadata:
+- At phase entry: set `metadata.phase = "PLAN" | "PATCH" | "DRIFT" | etc.`
+- At PATCH: set `metadata.edited_files = [list of files edited]`
+- At SPEC work: set `metadata.spec_version = "x.y.z"`
+- The plugin will block phase entry if protocol checks fail

@@ -1,5 +1,8 @@
 const PHASE_RE = /\[PHASE:\s*([A-Z]+)\]/gi;
 
+// opencode loads every file in plugins/ as a plugin, so a default export is required even though this file is only a helper.
+export default async () => ({});
+
 const sessionPhases = new Map<string, { phase: string; updatedAt: number }>();
 
 export function getCurrentPhase(sessionId: string): string | undefined {
@@ -8,8 +11,9 @@ export function getCurrentPhase(sessionId: string): string | undefined {
 
 export function updatePhaseFromMessages(
   sessionId: string,
-  messages: Array<{ content?: unknown; parts?: Array<{ type?: string; text?: string }> }>,
+  messages: Array<{ content?: unknown; parts?: Array<{ type?: string; text?: string }> }> | undefined,
 ): void {
+  if (!Array.isArray(messages)) return;
   let latestPhase: string | undefined;
   let latestIndex = -1;
 
